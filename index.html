@@ -869,33 +869,32 @@
             { id: 'guidance', name: 'แนะแนว', icon: 'fas fa-compass', emoji: '🧭', color: 'bg-gradient-orange' }
         ];
 
-        // Navigation functions
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.add('hidden');
-            });
-            
-            // Show selected page
-            document.getElementById(pageId + 'Page').classList.remove('hidden');
-            
-            // Update current page
-            currentPage = pageId;
-            
-            // Save current page to localStorage
-            localStorage.setItem('currentPage', pageId);
-            
-            // Update navigation highlighting
-            updateNavHighlight(pageId);
-            
-            // Load page-specific content
-            if (pageId === 'subjects') {
-                loadSubjectGroups();
-            }
-            
-            // Hide mobile menu
-            document.getElementById('mobileMenu').classList.add('hidden');
-        }
+  // Navigation functions
+function showPage(pageId) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.add('hidden');
+    });
+    // Show selected page
+    document.getElementById(pageId + 'Page').classList.remove('hidden');
+    // Update current page
+    currentPage = pageId;
+    // Save current page to localStorage
+    localStorage.setItem('currentPage', pageId);
+    // Update navigation highlighting
+    updateNavHighlight(pageId);
+    // Load page-specific content
+    if (pageId === 'subjects') {
+        loadSubjectGroups();
+    } else if (currentSubjectGroup && pageId === 'subjectDetail') {
+        loadSubjects(currentSubjectGroup);
+    }
+    // Hide mobile menu
+    document.getElementById('mobileMenu').classList.add('hidden');
+    
+    // ✨ แก้ไข 1: เลื่อนไปด้านบนสุดอัตโนมัติเมื่อเปลี่ยนหน้า
+    window.scrollTo(0, 0); 
+}
 
         function updateNavHighlight(pageId) {
             // Reset all nav links
@@ -1288,12 +1287,31 @@
             }
         }
 
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load saved page or default to home
-            const savedPage = localStorage.getItem('currentPage') || 'home';
-            showPage(savedPage);
-        });
+        // ✨ แก้ไข 2.1: บันทึกตำแหน่งการเลื่อน (Scroll Position) ก่อนรีเฟรช
+window.addEventListener('beforeunload', () => {
+    // บันทึกตำแหน่งการเลื่อนปัจจุบันใน sessionStorage
+    sessionStorage.setItem('scrollPosition', window.scrollY);
+});
+
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', function() {
+    // Load saved page or default to home
+    const savedPage = localStorage.getItem('currentPage') || 'home';
+    showPage(savedPage);
+
+    // ✨ แก้ไข 2.2: กู้คืนตำแหน่งการเลื่อนเมื่อรีเฟรช
+    const savedScrollY = sessionStorage.getItem('scrollPosition');
+    if (savedScrollY) {
+        // ใช้ setTimeout เล็กน้อยเพื่อให้แน่ใจว่าเนื้อหาถูกโหลดและ DOM ถูกจัดการเรียบร้อยแล้ว
+        setTimeout(() => {
+            window.scrollTo(0, parseInt(savedScrollY));
+            sessionStorage.removeItem('scrollPosition'); // ลบออกหลังใช้งาน
+        }, 50); 
+    }
+});
+
+        
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9952da1ca680731c',t:'MTc2MTU3NTAxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
