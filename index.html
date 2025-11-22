@@ -918,33 +918,31 @@ function showPage(pageId) {
         }
 
         // Subject management functions
-        function loadSubjectGroups() {
-            const container = document.getElementById('subjectGroups');
-            container.innerHTML = '';
-            
-            subjectGroups.forEach((group, index) => {
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-2xl shadow-custom p-6 card-hover cursor-pointer transform transition-all duration-300';
-                card.onclick = () => showSubjectDetail(group.id, group.name);
-                card.style.animationDelay = `${index * 0.1}s`;
-                
-                card.innerHTML = `
-                    <div class="text-center relative">
-                        <div class="w-20 h-20 ${group.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg relative overflow-hidden">
-                            <span class="text-3xl relative z-10">${group.emoji}</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-2 text-elegant">${group.name}</h3>
-                        <p class="text-gray-600 text-sm mb-4 text-beautiful">คลิกเพื่อดูรายวิชา</p>
-                        <div class="inline-flex items-center text-blue-600 font-semibold text-sm bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">
-                            <span>เริ่มเรียน</span>
-                            <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(card);
-            });
-        }
+        // เพิ่มหรือแก้ไขฟังก์ชันนี้ในส่วน JavaScript ของคุณ
+function loadSubjectGroups() {
+    // อ้างอิงถึง container element ที่มี id="subjectGroups"
+    const container = document.getElementById('subjectGroups'); 
+    container.innerHTML = ''; // เคลียร์เนื้อหาเก่า
+
+    subjectGroups.forEach(group => {
+        const card = document.createElement('div');
+        
+        // ใช้ Tailwind CSS classes เดิมจาก card-hover ในไฟล์ของคุณ
+        card.className = `${group.color} text-white rounded-2xl shadow-custom p-6 card-hover flex flex-col justify-center items-center text-center cursor-pointer transition-all duration-300 group`;
+        card.setAttribute('onclick', `handleSubjectGroupClick('${group.id}', '${group.name}')`);
+
+        // สร้าง Card HTML
+        card.innerHTML = `
+            <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mb-4 transition-all duration-300 transform group-hover:scale-110">
+                <img src="${group.image}" alt="${group.name} Icon" class="w-16 h-16 object-contain">
+            </div>
+            <h3 class="text-xl font-bold text-elegant">${group.name}</h3>
+            <p class="text-sm opacity-80">${group.id.toUpperCase()}</p>
+        `;
+        container.appendChild(card);
+    });
+}
+
 
         function showSubjectDetail(groupId, groupName) {
             currentSubjectGroup = groupId;
