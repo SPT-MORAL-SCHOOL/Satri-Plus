@@ -954,7 +954,12 @@ function loadSubjectGroups() {
         function showSubjectDetail(groupId, groupName) {
             currentSubjectGroup = groupId;
             document.getElementById('subjectDetailTitle').textContent = groupName;
-            
+            // ✨ ส่วนที่เพิ่ม/แก้ไข เพื่ออัปเดต URL Hash
+    // บรรทัดนี้จะเปลี่ยน URL เป็น /#subjects/groupId เช่น /#subjects/thai
+    history.pushState(null, null, `#subjects/${groupId}`);
+    
+    // โค้ดส่วนอื่น ๆ ยังคงเหมือนเดิม
+    localStorage.setItem('currentPage', 'subjectDetail'); 
             // Show admin controls if user is logged in
             if (currentUser) {
                 document.getElementById('adminControls').style.display = 'block';
@@ -1002,6 +1007,54 @@ function loadSubjectGroups() {
             }
         }
 
+        // ✨ แก้ไข 2: ฟังก์ชันจัดการ Routing ตาม URL Hash
+function handleHashRoute() {
+    // อ่าน hash จาก URL และลบเครื่องหมาย # ออก
+    const hash = window.location.hash.slice(1);
+    const parts = hash.split('/');
+    let pageId = parts[0] || 'home'; // ส่วนแรกคือ pageId (e.g., home, subjects)
+    let param = parts[1]; // ส่วนที่สองคือ parameter (e.g., groupId)
+
+    if (pageId === 'subjects' && param) {
+        // กรณีเข้าถึง detail โดยตรง: /#subjects/groupId
+        const groupId = param;
+        
+        // ค้นหา group object จาก groupId
+        const group = subjectGroups.find(g => g.id === groupId);
+        
+        if (group) {
+            // อัปเดต currentSubjectGroup, โหลดข้อมูล, และแสดงหน้า
+            currentSubjectGroup = group.id;
+            document.getElementById('subjectDetailTitle').innerText = group.name;
+            loadSubjects(group.id);
+            showPage('subjectDetail');
+            
+            // ให้แน่ใจว่า adminControls ถูกจัดการ
+            if (currentUser) {
+                document.getElementById('adminControls').style.display = 'block';
+            } else {
+                document.getElementById('adminControls').style.display = 'none';
+            }
+            return;
+        } else {
+            // ถ้า groupId ไม่ถูกต้อง ให้กลับไปหน้า subjects หลัก
+            pageId = 'subjects';
+            // ล้าง hash ใน URL ให้เป็น #subjects
+            history.pushState(null, null, `#${pageId}`); 
+        }
+    }
+    
+    // สำหรับหน้าหลักอื่นๆ (home, about, subjects, contact, login)
+    // หรือกรณีที่ group ไม่ถูกต้อง
+    showPage(pageId);
+    
+    // ตรวจสอบและซ่อน adminControls หากไม่ได้อยู่ในหน้า subjectDetail
+    if (pageId !== 'subjectDetail') {
+         document.getElementById('adminControls').style.display = 'none';
+    }
+}
+
+        
         function createSubjectCard(subjectName, topics) {
             const card = document.createElement('div');
             card.className = 'bg-white rounded-2xl shadow-custom p-8 card-hover col-span-full border-l-4 border-blue-500';
@@ -1292,10 +1345,40 @@ function loadSubjectGroups() {
         }
 
         // ✨ แก้ไข 2.1: บันทึกตำแหน่งการเลื่อน (Scroll Position) ก่อนรีเฟรช
-window.addEventListener('beforeunload', () => {
-    // บันทึกตำแหน่งการเลื่อนปัจจุบันใน sessionStorage
-    sessionStorage.setItem('scrollPosition', window.scrollY);
+window.addEventListener('load', () => {
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    auth = firebase.auth();
+    db = firebase.firestore();
+
+    // Attach event listener for authentication state changes
+    auth.onAuthStateChanged(user => {
+        currentUser = user;
+        updateAuthStatus(user);
+        // เมื่อสถานะเปลี่ยน (ล็อกอิน/ล็อกเอาต์) ให้จัดการ Route ใหม่
+        handleHashRoute(); 
+    });
+    
+    // ✨ แก้ไข 3: ใช้ handleHashRoute() แทน showPage() ในการโหลดครั้งแรก
+    handleHashRoute(); 
+    
+    // ✨ แก้ไข 4: เพิ่ม Event Listener สำหรับ hashchange เพื่อรองรับปุ่ม Back/Forward
+    window.addEventListener('hashchange', handleHashRoute);
+
+
+    // ✨ แก้ไข 2.2: กู้คืนตำแหน่งการเลื่อนเมื่อรีเฟรช (โค้ดเดิม)
+    const savedScrollY = sessionStorage.getItem('scrollPosition');
+    if (savedScrollY) {
+        // ใช้ setTimeout เล็กน้อยเพื่อให้แน่ใจว่าเนื้อหาถูกโหลดและ DOM ถูกจัดการเรียบร้อยแล้ว
+        setTimeout(() => {
+            window.scrollTo(0, parseInt(savedScrollY));
+            sessionStorage.removeItem('scrollPosition'); // ลบออกหลังใช้งาน
+        }, 50); 
+    }
 });
+
 
 
 // Initialize the app
