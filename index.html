@@ -880,13 +880,13 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
 // Navigation functions 
 // Navigation functions 
 // function showPage(pageId, isHashChange = false) { // โค้ดเดิม/โค้ดที่เคยแก้ไข
-let currentPage = 'home'; // ✨ ตรวจสอบว่ามีการประกาศตัวแปรนี้ไว้ด้านบนสุดหรือไม่
 
+
+// Navigation functions 
 // Navigation functions 
 function showPage(hashOrPageId, isHashChange = false) { 
     hashOrPageId = hashOrPageId.replace('#', '') || 'home'; 
     
-    // ✨ ส่วนสำคัญ 1: แยก pageId และ subParameter
     const parts = hashOrPageId.split('/');
     const pageId = parts[0] || 'home';
     const subParameter = parts[1] || null; 
@@ -896,43 +896,40 @@ function showPage(hashOrPageId, isHashChange = false) {
         return;
     }
     
-    // Hide all pages
+    // 1. ซ่อนหน้าเว็บทั้งหมดที่มี Class "page"
     document.querySelectorAll('.page').forEach(page => {
         page.classList.add('hidden');
     });
 
-    // Show selected page
+    // 2. แสดงหน้าเว็บที่ต้องการ
     const targetPageElement = document.getElementById(pageId + 'Page');
     if (targetPageElement) {
         targetPageElement.classList.remove('hidden');
     } else {
-        // หากหาหน้าหลักไม่พบ ให้ใช้หน้า home
+        // Fallback: หากหา pageId ไม่เจอ ให้กลับไปหน้า home
         pageId = 'home'; 
         document.getElementById('homePage').classList.remove('hidden');
     }
 
-    // Update current page
-    currentPage = hashOrPageId; // เก็บ hash เต็ม (เช่น 'subjectDetail/science')
-
-    // อัพเดต URL Hash
+    // 3. อัพเดตสถานะและ URL Hash
+    currentPage = hashOrPageId; 
     if (window.location.hash !== '#' + hashOrPageId) {
         history.pushState(null, null, '#' + hashOrPageId);
     }
     
-    // Update navigation highlighting
+    // 4. อัพเดตไฮไลท์เมนู (ต้องแน่ใจว่าฟังก์ชันนี้ทำงานได้)
     updateNavHighlight(pageId); 
 
-    // ✨ ส่วนสำคัญ 2: จัดการการโหลดกลุ่มวิชาตาม subParameter
+    // 5. จัดการการโหลดเนื้อหาเฉพาะหน้า
     if (pageId === 'subjects') {
         loadSubjectGroups();
     } else if (pageId === 'subjectDetail') {
-        const groupIdToLoad = subParameter; // ใช้ subParameter โดยตรง
+        const groupIdToLoad = subParameter;
         
         if (groupIdToLoad) {
-            currentSubjectGroup = groupIdToLoad; // อัปเดต global variable
+            currentSubjectGroup = groupIdToLoad;
             loadSubjects(groupIdToLoad);
         } else {
-            // หากไม่มี group id ใน hash (URL เป็นแค่ #subjectDetail) ให้เปลี่ยนไปหน้า subjects
             showPage('subjects'); 
             return; 
         }
@@ -941,9 +938,10 @@ function showPage(hashOrPageId, isHashChange = false) {
     // Hide mobile menu
     document.getElementById('mobileMenu').classList.add('hidden');
 
-    // เลื่อนไปด้านบนสุดอัตโนมัติเมื่อเปลี่ยนหน้า 
+    // เลื่อนไปด้านบนสุดอัตโนมัติ
     window.scrollTo(0, 0);
 }
+
 
 
 
