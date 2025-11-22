@@ -872,31 +872,62 @@
 
 
   // Navigation functions
-function showPage(pageId) {
-    // Hide all pages
+// Navigation functions 
+function showPage(pageId, isHashChange = false) { // ✨ แก้ไข 2.1: เพิ่ม parameter isHashChange
+    pageId = pageId.replace('#', '') || 'home'; 
+
+    // **Start of New Logic**
+    // ป้องกันการทำงานซ้ำหากหน้าไม่ได้เปลี่ยนและ hash ตรงกัน
+    if (pageId === currentPage && !isHashChange && window.location.hash === '#' + pageId) {
+        return;
+    }
+    // **End of New Logic**
+    
+    // // Hide all pages
     document.querySelectorAll('.page').forEach(page => {
         page.classList.add('hidden');
     });
-    // Show selected page
-    document.getElementById(pageId + 'Page').classList.remove('hidden');
-    // Update current page
+
+    // // Show selected page
+    const targetPageElement = document.getElementById(pageId + 'Page');
+    if (targetPageElement) {
+        targetPageElement.classList.remove('hidden');
+    } else {
+        // Fallback to home if pageId is invalid
+        pageId = 'home';
+        document.getElementById('homePage').classList.remove('hidden');
+    }
+
+    // // Update current page
     currentPage = pageId;
-    // Save current page to localStorage
-    localStorage.setItem('currentPage', pageId);
-    // Update navigation highlighting
+
+    // **Start of New Logic**
+    // REMOVED: localStorage.setItem('currentPage', pageId); // เพราะเราจะใช้ hash แทน
+    
+    // ✨ แก้ไข 2.2: อัพเดต URL Hash
+    if (window.location.hash !== '#' + pageId) {
+        // ใช้ history.pushState เพื่อเปลี่ยน URL โดยไม่ทำให้หน้ากระโดด
+        history.pushState(null, null, '#' + pageId);
+    }
+    // **End of New Logic**
+    
+    // // Update navigation highlighting
     updateNavHighlight(pageId);
-    // Load page-specific content
+
+    // // Load page-specific content
     if (pageId === 'subjects') {
         loadSubjectGroups();
     } else if (currentSubjectGroup && pageId === 'subjectDetail') {
         loadSubjects(currentSubjectGroup);
     }
-    // Hide mobile menu
+
+    // // Hide mobile menu
     document.getElementById('mobileMenu').classList.add('hidden');
-    
-    // ✨ แก้ไข 1: เลื่อนไปด้านบนสุดอัตโนมัติเมื่อเปลี่ยนหน้า
-    window.scrollTo(0, 0); 
+
+    // // ✨ แก้ไข 1: เลื่อนไปด้านบนสุดอัตโนมัติเมื่อเปลี่ยนหน้า 
+    window.scrollTo(0, 0);
 }
+
 
         function updateNavHighlight(pageId) {
             // Reset all nav links
@@ -1299,21 +1330,56 @@ window.addEventListener('beforeunload', () => {
 
 
 // Initialize the app
-document.addEventListener('DOMContentLoaded', function() {
-    // Load saved page or default to home
-    const savedPage = localStorage.getItem('currentPage') || 'home';
-    showPage(savedPage);
+// // Event listener for when the DOM is fully loaded 
+document.addEventListener('DOMContentLoaded', () => {
+    // auth.onAuthStateChanged(user => {
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            currentUser = user;
+            updateAuthUI(true);
+        } else {
+            currentUser = null;
+            updateAuthUI(false);
+        }
+    });
 
-    // ✨ แก้ไข 2.2: กู้คืนตำแหน่งการเลื่อนเมื่อรีเฟรช
+    // **Start of New/Modified Logic**
+
+    // ✨ แก้ไข 3.1: ตรวจสอบ URL Hash เพื่อโหลดหน้าเริ่มต้น
+    // ดึงค่า hash จาก URL (เช่น #subjects)
+    const hash = window.location.hash; 
+    // ตัดเครื่องหมาย # ออก และกำหนดให้ 'home' เป็นค่าเริ่มต้นหากไม่มี hash
+    const initialPage = hash ? hash.substring(1) : 'home'; 
+    
+    // โหลดหน้าตาม hash ที่พบ หรือ หน้าแรก (home)
+    showPage(initialPage); 
+
+    // ✨ แก้ไข 3.2: เพิ่ม Event Listener สำหรับปุ่มย้อนกลับ/ไปข้างหน้าของเบราว์เซอร์
+    // เมื่อ hash ใน URL มีการเปลี่ยนแปลง (เช่น กดปุ่ม Back/Forward หรือเปลี่ยน hash ด้วยตนเอง)
+    window.addEventListener('hashchange', () => {
+        // ดึง hash ใหม่
+        const newPageId = window.location.hash ? window.location.hash.substring(1) : 'home';
+        // เรียก showPage โดยตั้งค่า isHashChange เป็น true 
+        showPage(newPageId, true);
+    });
+    // **End of New/Modified Logic**
+
+    //     // ✨ แก้ไข 2.2: กู้คืนตำแหน่งการเลื่อนเมื่อรีเฟรช (โค้ดเดิมที่ยังคงใช้งาน)
     const savedScrollY = sessionStorage.getItem('scrollPosition');
+    //     if (savedScrollY) {
     if (savedScrollY) {
-        // ใช้ setTimeout เล็กน้อยเพื่อให้แน่ใจว่าเนื้อหาถูกโหลดและ DOM ถูกจัดการเรียบร้อยแล้ว
+        //         // ใช้ setTimeout เล็กน้อยเพื่อให้แน่ใจว่าเนื้อหาถูกโหลดและ DOM ถูกจัดการเรียบร้อยแล้ว
+        //         setTimeout(() => {
         setTimeout(() => {
+            //             window.scrollTo(0, parseInt(savedScrollY));
             window.scrollTo(0, parseInt(savedScrollY));
+            //             sessionStorage.removeItem('scrollPosition'); // ลบออกหลังใช้งาน
             sessionStorage.removeItem('scrollPosition'); // ลบออกหลังใช้งาน
+        //         }, 50); 
         }, 50); 
     }
 });
+
 
         
     </script>
