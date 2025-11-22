@@ -199,15 +199,15 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#" onclick="showPage('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">หน้าหลัก</a>
-                    <a href="#" onclick="showPage('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">เกี่ยวกับ</a>
-                    <a href="#" onclick="showPage('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">กลุ่มสาระการเรียนรู้</a>
-                    <a href="#" onclick="showPage('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">ติดต่อ</a>
+                    <a href="#home" onclick="showPage('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">หน้าหลัก</a>
+                    <a href="#about" onclick="showPage('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">เกี่ยวกับ</a>
+                    <a href="#subjects" onclick="showPage('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">กลุ่มสาระการเรียนรู้</a>
+                    <a href="#contacts" onclick="showPage('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">ติดต่อ</a>
                     
                     <!-- Auth Status -->
                     <div id="authStatus" class="flex items-center space-x-3">
                         <!-- Login Button (shown when not logged in) -->
-                        <a href="#" id="loginBtn" onclick="showPage('login')" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">เข้าสู่ระบบ</a>
+                        <a href="#login" id="loginBtn" onclick="showPage('login')" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">เข้าสู่ระบบ</a>
                         
                         <!-- User Info (shown when logged in) -->
                         <div id="userInfo" class="hidden flex items-center space-x-3">
@@ -234,15 +234,15 @@
             <!-- Mobile Menu -->
             <div id="mobileMenu" class="hidden md:hidden pb-4">
                 <div class="flex flex-col space-y-2">
-                    <a href="#" onclick="showPage('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">หน้าหลัก</a>
-                    <a href="#" onclick="showPage('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">เกี่ยวกับ</a>
-                    <a href="#" onclick="showPage('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">กลุ่มสาระการเรียนรู้</a>
-                    <a href="#" onclick="showPage('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">ติดต่อ</a>
+                    <a href="#home" onclick="showPage('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">หน้าหลัก</a>
+                    <a href="#about" onclick="showPage('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">เกี่ยวกับ</a>
+                    <a href="#subjects" onclick="showPage('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">กลุ่มสาระการเรียนรู้</a>
+                    <a href="#contact" onclick="showPage('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">ติดต่อ</a>
                     
                     <!-- Mobile Auth Status -->
                     <div id="mobileAuthStatus">
                         <!-- Login Button (shown when not logged in) -->
-                        <a href="#" id="mobileLoginBtn" onclick="showPage('login')" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 block">เข้าสู่ระบบ</a>
+                        <a href="#login" id="mobileLoginBtn" onclick="showPage('login')" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 block">เข้าสู่ระบบ</a>
                         
                         <!-- User Info (shown when logged in) -->
                         <div id="mobileUserInfo" class="hidden space-y-2">
