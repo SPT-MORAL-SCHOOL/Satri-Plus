@@ -972,13 +972,7 @@ function loadSubjectGroups() {
             subjectGroups.forEach((group, index) => {
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-2xl shadow-custom p-6 card-hover cursor-pointer transform transition-all duration-300';
-                // ส่วนนี้คือโค้ดที่คุณต้องเปลี่ยนใน loadSubjectGroups()
-card.onclick = () => {
-    // ไม่จำเป็นต้องตั้ง currentSubjectGroup ที่นี่แล้ว
-    // ✨ แก้ไข 2.1: ส่ง hash เป็น 'ชื่อหน้า/IDกลุ่ม'
-    showPage('subjectDetail/' + group.id); 
-};
-
+                card.onclick = () => showSubjectDetail(group.id, group.name);
                 card.style.animationDelay = `${index * 0.1}s`;
                 
                 card.innerHTML = `
