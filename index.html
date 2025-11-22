@@ -234,15 +234,15 @@
             <!-- Mobile Menu -->
             <div id="mobileMenu" class="hidden md:hidden pb-4">
                 <div class="flex flex-col space-y-2">
-                    <a href="#" onclick="showPage('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">หน้าหลัก</a>
-                    <a href="#" onclick="showPage('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">เกี่ยวกับ</a>
-                    <a href="#" onclick="showPage('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">กลุ่มสาระการเรียนรู้</a>
-                    <a href="#" onclick="showPage('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">ติดต่อ</a>
+                    <a href="#home" onclick="showPage('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">หน้าหลัก</a>
+                    <a href="#about" onclick="showPage('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">เกี่ยวกับ</a>
+                    <a href="#subjects" onclick="showPage('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">กลุ่มสาระการเรียนรู้</a>
+                    <a href="#contact" onclick="showPage('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">ติดต่อ</a>
                     
                     <!-- Mobile Auth Status -->
                     <div id="mobileAuthStatus">
                         <!-- Login Button (shown when not logged in) -->
-                        <a href="#" id="mobileLoginBtn" onclick="showPage('login')" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 block">เข้าสู่ระบบ</a>
+                        <a href="#login" id="mobileLoginBtn" onclick="showPage('login')" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 block">เข้าสู่ระบบ</a>
                         
                         <!-- User Info (shown when logged in) -->
                         <div id="mobileUserInfo" class="hidden space-y-2">
@@ -735,25 +735,25 @@
                     </h3>
                     <ul class="space-y-3">
                         <li>
-                            <a href="#" onclick="showPage('home')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
+                            <a href="#home" onclick="showPage('home')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
                                 <div class="w-2 h-2 bg-blue-400 rounded-full group-hover:w-4 transition-all duration-300"></div>
                                 <span class="group-hover:translate-x-1 transition-transform duration-300">🏠 หน้าหลัก</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#" onclick="showPage('about')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
+                            <a href="#about" onclick="showPage('about')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
                                 <div class="w-2 h-2 bg-green-400 rounded-full group-hover:w-4 transition-all duration-300"></div>
                                 <span class="group-hover:translate-x-1 transition-transform duration-300">ℹ️ เกี่ยวกับ</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#" onclick="showPage('subjects')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
+                            <a href="#subjects" onclick="showPage('subjects')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
                                 <div class="w-2 h-2 bg-purple-400 rounded-full group-hover:w-4 transition-all duration-300"></div>
                                 <span class="group-hover:translate-x-1 transition-transform duration-300">📚 กลุ่มสาระการเรียนรู้</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#" onclick="showPage('contact')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
+                            <a href="#contact" onclick="showPage('contact')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
                                 <div class="w-2 h-2 bg-pink-400 rounded-full group-hover:w-4 transition-all duration-300"></div>
                                 <span class="group-hover:translate-x-1 transition-transform duration-300">📞 ติดต่อ</span>
                             </a>
