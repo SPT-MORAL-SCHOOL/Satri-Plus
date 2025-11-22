@@ -202,7 +202,7 @@
                     <a href="#home" onclick="showPage('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">หน้าหลัก</a>
                     <a href="#about" onclick="showPage('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">เกี่ยวกับ</a>
                     <a href="#subjects" onclick="showPage('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">กลุ่มสาระการเรียนรู้</a>
-                    <a href="#contacts" onclick="showPage('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">ติดต่อ</a>
+                    <a href="#contact" onclick="showPage('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">ติดต่อ</a>
                     
                     <!-- Auth Status -->
                     <div id="authStatus" class="flex items-center space-x-3">
@@ -873,15 +873,20 @@
 
   // Navigation functions
 // Navigation functions 
-function showPage(pageId, isHashChange = false) { // ✨ แก้ไข 2.1: เพิ่ม parameter isHashChange
-    pageId = pageId.replace('#', '') || 'home'; 
+// Navigation functions 
+// function showPage(pageId, isHashChange = false) { // โค้ดเดิม/โค้ดที่เคยแก้ไข
+function showPage(hashOrPageId, isHashChange = false) { // ✨ แก้ไข 1.1: เปลี่ยนชื่อ parameter
+    hashOrPageId = hashOrPageId.replace('#', '') || 'home'; 
+    
+    // ✨ แก้ไข 1.2: แยกส่วน hash: หน้าหลัก/พารามิเตอร์ย่อย (เช่น 'subjectDetail' และ 'group-math')
+    const parts = hashOrPageId.split('/');
+    const pageId = parts[0] || 'home';
+    const subParameter = parts[1] || null; // นี่คือ SubjectGroup ID ที่เราต้องการ
 
-    // **Start of New Logic**
-    // ป้องกันการทำงานซ้ำหากหน้าไม่ได้เปลี่ยนและ hash ตรงกัน
-    if (pageId === currentPage && !isHashChange && window.location.hash === '#' + pageId) {
+    // ป้องกันการทำงานซ้ำ
+    if (hashOrPageId === currentPage && !isHashChange && window.location.hash === '#' + hashOrPageId) {
         return;
     }
-    // **End of New Logic**
     
     // // Hide all pages
     document.querySelectorAll('.page').forEach(page => {
@@ -893,40 +898,45 @@ function showPage(pageId, isHashChange = false) { // ✨ แก้ไข 2.1: �
     if (targetPageElement) {
         targetPageElement.classList.remove('hidden');
     } else {
-        // Fallback to home if pageId is invalid
         pageId = 'home';
         document.getElementById('homePage').classList.remove('hidden');
     }
 
     // // Update current page
-    currentPage = pageId;
+    currentPage = hashOrPageId; // เก็บ hash เต็ม (รวม subParameter)
 
-    // **Start of New Logic**
-    // REMOVED: localStorage.setItem('currentPage', pageId); // เพราะเราจะใช้ hash แทน
-    
-    // ✨ แก้ไข 2.2: อัพเดต URL Hash
-    if (window.location.hash !== '#' + pageId) {
-        // ใช้ history.pushState เพื่อเปลี่ยน URL โดยไม่ทำให้หน้ากระโดด
-        history.pushState(null, null, '#' + pageId);
+    // ✨ แก้ไข 1.3: อัพเดต URL Hash ด้วย hash เต็ม
+    if (window.location.hash !== '#' + hashOrPageId) {
+        history.pushState(null, null, '#' + hashOrPageId);
     }
-    // **End of New Logic**
     
     // // Update navigation highlighting
-    updateNavHighlight(pageId);
+    updateNavHighlight(pageId); // ใช้ pageId หลักเท่านั้นในการไฮไลท์
 
     // // Load page-specific content
     if (pageId === 'subjects') {
         loadSubjectGroups();
-    } else if (currentSubjectGroup && pageId === 'subjectDetail') {
-        loadSubjects(currentSubjectGroup);
+    } else if (pageId === 'subjectDetail') {
+        // ✨ แก้ไข 1.4: จัดการการโหลดกลุ่มวิชาตาม subParameter
+        const groupIdToLoad = subParameter || currentSubjectGroup;
+        
+        if (groupIdToLoad) {
+            currentSubjectGroup = groupIdToLoad; // อัปเดต global variable
+            loadSubjects(groupIdToLoad);
+        } else {
+            // หากไม่มี group id ใน hash ให้เปลี่ยนไปหน้า subjects
+            showPage('subjects'); 
+            return; 
+        }
     }
 
     // // Hide mobile menu
     document.getElementById('mobileMenu').classList.add('hidden');
 
-    // // ✨ แก้ไข 1: เลื่อนไปด้านบนสุดอัตโนมัติเมื่อเปลี่ยนหน้า 
+    // // เลื่อนไปด้านบนสุดอัตโนมัติเมื่อเปลี่ยนหน้า 
     window.scrollTo(0, 0);
 }
+
 
 
         function updateNavHighlight(pageId) {
@@ -960,7 +970,13 @@ function loadSubjectGroups() {
             subjectGroups.forEach((group, index) => {
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-2xl shadow-custom p-6 card-hover cursor-pointer transform transition-all duration-300';
-                card.onclick = () => showSubjectDetail(group.id, group.name);
+                // ส่วนนี้คือโค้ดที่คุณต้องเปลี่ยนใน loadSubjectGroups()
+card.onclick = () => {
+    // ไม่จำเป็นต้องตั้ง currentSubjectGroup ที่นี่แล้ว
+    // ✨ แก้ไข 2.1: ส่ง hash เป็น 'ชื่อหน้า/IDกลุ่ม'
+    showPage('subjectDetail/' + group.id); 
+};
+
                 card.style.animationDelay = `${index * 0.1}s`;
                 
                 card.innerHTML = `
@@ -1347,21 +1363,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ✨ แก้ไข 3.1: ตรวจสอบ URL Hash เพื่อโหลดหน้าเริ่มต้น
     // ดึงค่า hash จาก URL (เช่น #subjects)
-    const hash = window.location.hash; 
-    // ตัดเครื่องหมาย # ออก และกำหนดให้ 'home' เป็นค่าเริ่มต้นหากไม่มี hash
+    document.addEventListener('DOMContentLoaded', () => {
+    // ... โค้ดเดิมส่วน auth.onAuthStateChanged ...
+
+    // ตรวจสอบ URL Hash เพื่อโหลดหน้าเริ่มต้น
+    const hash = window.location.hash;
     const initialPage = hash ? hash.substring(1) : 'home'; 
     
-    // โหลดหน้าตาม hash ที่พบ หรือ หน้าแรก (home)
-    showPage(initialPage); 
+    showPage(initialPage); // ส่งค่าเต็ม เช่น 'subjectDetail/group-math' ให้ showPage
 
-    // ✨ แก้ไข 3.2: เพิ่ม Event Listener สำหรับปุ่มย้อนกลับ/ไปข้างหน้าของเบราว์เซอร์
-    // เมื่อ hash ใน URL มีการเปลี่ยนแปลง (เช่น กดปุ่ม Back/Forward หรือเปลี่ยน hash ด้วยตนเอง)
+    // Event Listener สำหรับปุ่มย้อนกลับ/ไปข้างหน้าของเบราว์เซอร์
     window.addEventListener('hashchange', () => {
-        // ดึง hash ใหม่
         const newPageId = window.location.hash ? window.location.hash.substring(1) : 'home';
-        // เรียก showPage โดยตั้งค่า isHashChange เป็น true 
         showPage(newPageId, true);
     });
+    
+    // ... โค้ดเดิมส่วนกู้คืนตำแหน่งการเลื่อน ...
+});
+
     // **End of New/Modified Logic**
 
     //     // ✨ แก้ไข 2.2: กู้คืนตำแหน่งการเลื่อนเมื่อรีเฟรช (โค้ดเดิมที่ยังคงใช้งาน)
