@@ -1062,7 +1062,9 @@ function handleHashRoute() {
             card.className = 'bg-white rounded-2xl shadow-custom p-8 card-hover col-span-full border-l-4 border-blue-500';
             
             let topicsHtml = '';
-            topics.forEach((topic, index) => {
+            topics
+                .sort((a, b) => a.localeCompare(b, 'th'))
+                .forEach((topic, index) => {
                 const typeColor = topic.type === 'แบบทดสอบ' ? 'bg-gradient-green text-white' : 'bg-gradient-blue text-white';
                 const typeEmoji = topic.type === 'แบบทดสอบ' ? '📝' : '📚';
                 topicsHtml += `
