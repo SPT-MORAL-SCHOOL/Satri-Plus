@@ -873,6 +873,31 @@
 
   // Navigation functions
 function showPage(pageId) {
+    if (checkHashForSubjectDetail()) {
+        localStorage.setItem('currentPage', 'subjectDetail');
+        return; 
+    }
+    
+    // 2. ถ้าไม่ใช่ Subject Detail ให้ทำงานตามปกติ (แสดงหน้าหลักหรือหน้าอื่น ๆ)
+    
+    // โค้ดเดิม: ซ่อนทุกหน้า, แสดงหน้าตาม pageId
+    document.querySelectorAll('.page-content').forEach(el => {
+        el.classList.add('hidden');
+    });
+
+    const pageElement = document.getElementById(pageId + 'Page');
+    if (pageElement) {
+        pageElement.classList.remove('hidden');
+    }
+    
+    localStorage.setItem('currentPage', pageId);
+
+    // ✨ เพิ่มโค้ด: อัปเดต URL Hash เมื่อเปลี่ยนหน้าหลัก (เช่น กลับไปหน้า home)
+    if (pageId === 'home') {
+        history.pushState(null, '', window.location.pathname); // ลบ Hash ออก
+    } else if (pageId === 'groups') {
+        history.pushState(null, '', '#groups');
+    }
     // Hide all pages
     document.querySelectorAll('.page').forEach(page => {
         page.classList.add('hidden');
@@ -897,6 +922,27 @@ function showPage(pageId) {
     // ✨ แก้ไข 1: เลื่อนไปด้านบนสุดอัตโนมัติเมื่อเปลี่ยนหน้า
     window.scrollTo(0, 0); 
 }
+        // ฟังก์ชันใหม่: ใช้ตรวจสอบและโหลดรายละเอียดวิชาจาก URL Hash
+function checkHashForSubjectDetail() {
+    const hash = window.location.hash;
+    const parts = hash.substring(1).split('/'); // ตัด # ออก แล้วแยกด้วย /
+
+    // ตรวจสอบรูปแบบ: #subjects/groupId/subjectName
+    if (parts.length >= 3 && parts[0] === 'subjects') {
+        const groupId = parts[1];
+        // ต้องถอดรหัส (decode) ชื่อวิชาที่อาจมีช่องว่างหรืออักขระพิเศษ
+        const subjectNameEncoded = parts[2]; 
+        const subjectName = decodeURIComponent(subjectNameEncoded);
+
+        // โหลดข้อมูลวิชา
+        showSubjectDetail(groupId, subjectName, true); // true คือมาจาก Hash, ไม่ต้องอัปเดต Hash ซ้ำ
+        return true;
+    }
+    return false;
+}
+
+
+
 
         function updateNavHighlight(pageId) {
             // Reset all nav links
@@ -1352,8 +1398,17 @@ function handleHashRoute() {
             }
         }
 
+        window.addEventListener('popstate', () => {
+    // เมื่อผู้ใช้กดปุ่ม Back/Forward ให้ตรวจสอบ Hash ใหม่
+    if (!checkHashForSubjectDetail()) {
+        // ถ้าไม่ตรงกับรูปแบบ Subject Detail ให้กลับไปหน้าหลัก
+        showPage('home'); // หรือหน้า groups ตามที่เหมาะสม
+    }
+});
+
         // ✨ แก้ไข 2.1: บันทึกตำแหน่งการเลื่อน (Scroll Position) ก่อนรีเฟรช
 window.addEventListener('load', () => {
+    
     // Initialize Firebase
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
