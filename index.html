@@ -997,7 +997,7 @@ function loadSubjectGroups() {
                 
                 // Create cards for each subject
                 Object.keys(subjectsByName)
-                    .sort((a, b) => a.localeCompare(b, 'th')
+                    .sort((a, b) => a.localeCompare(b, 'th'))
                     .forEach(subjectName => {
                     const topics = subjectsByName[subjectName];
                     const card = createSubjectCard(subjectName, topics);
