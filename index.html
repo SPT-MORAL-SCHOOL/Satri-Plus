@@ -1000,6 +1000,12 @@ function loadSubjectGroups() {
                     .sort((a, b) => a.localeCompare(b, 'th'))
                     .forEach(subjectName => {
                     const topics = subjectsByName[subjectName];
+                        topics.sort((a, b) => {
+    const nameA = a.topicName || a.title || ''; 
+    const nameB = b.topicName || b.title || ''; 
+    return nameA.localeCompare(nameB, 'th');
+});
+
                     const card = createSubjectCard(subjectName, topics);
                     container.appendChild(card);
                 });
@@ -1062,9 +1068,7 @@ function handleHashRoute() {
             card.className = 'bg-white rounded-2xl shadow-custom p-8 card-hover col-span-full border-l-4 border-blue-500';
             
             let topicsHtml = '';
-            topics
-                .sort((a, b) => a.localeCompare(b, 'th'))
-                .forEach((topic, index) => {
+            topics.forEach((topic, index) => {
                 const typeColor = topic.type === 'แบบทดสอบ' ? 'bg-gradient-green text-white' : 'bg-gradient-blue text-white';
                 const typeEmoji = topic.type === 'แบบทดสอบ' ? '📝' : '📚';
                 topicsHtml += `
