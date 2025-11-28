@@ -1020,38 +1020,45 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
          * โหลดกลุ่มสาระการเรียนรู้
          */
         function loadSubjectGroups() {
-            const container = document.getElementById('subjectGroups');
-            container.innerHTML = ''; 
+    const container = document.getElementById('subjectGroups');
+    container.innerHTML = ''; 
 
-            subjectGroupsData.forEach(group => {
-                const card = document.createElement('a');
-                card.href = `#subjects/${group.id}`;
-                card.className = `bg-white block ${group.color} text-white rounded-xl shadow-custom p-6 transition-all duration-300 transform hover:scale-[1.03] hover:shadow-hover relative overflow-hidden group`;
-                // ใช้ navigateTo สำหรับการคลิก
-                card.onclick = (e) => {
-                    e.preventDefault(); 
-                    navigateTo(`subjects/${group.id}`);
-                };
-                
+    subjectGroupsData.forEach(group => {
+        const card = document.createElement('a');
+        card.href = `#subjects/${group.id}`;
+        // 1. ลบคลาส p-6 ออกจาก Card หลัก
+        // 2. ลบคลาส text-white ออกเพราะเนื้อหาจะใช้ text-gray-800 เป็นหลัก
+        card.className = `block ${group.color} rounded-xl shadow-custom transition-all duration-300 transform hover:scale-[1.03] hover:shadow-hover relative overflow-hidden group`;
+        
+        // ใช้ navigateTo สำหรับการคลิก
+        card.onclick = (e) => {
+            e.preventDefault(); 
+            navigateTo(`subjects/${group.id}`);
+        };
+        
 
-                
-                card.innerHTML = `
-                    <div class="bg-white text-center relative">
-                        <div class="w-20 h-20 ${group.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg relative overflow-hidden">
-                            <img src="${group.image}" alt="${group.name} Icon" class="w-16 h-16 object-contain shadow-lg rounded-full">
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-2 text-elegant">${group.name}</h3>
-                        <p class="text-gray-600 text-sm mb-4 text-beautiful">คลิกเพื่อดูรายวิชา</p>
-                        <div class="inline-flex items-center text-blue-600 font-semibold text-sm bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">
-                            <span>เริ่มเรียน</span>
-                            <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(card);
-            });
-        }
+        // 3. ปรับปรุง innerHTML:
+        //    - เพิ่มคลาส bg-white ให้กับ div ด้านใน
+        //    - เพิ่ม p-6 กลับเข้าไปใน div สีขาวเพื่อให้เนื้อหามีระยะห่าง
+        //    - เพิ่ม rounded-xl เพื่อให้มุมโค้งตาม Card หลัก
+        card.innerHTML = `
+            <div class="bg-white text-center p-6 relative h-full w-full rounded-xl">
+                <div class="w-20 h-20 ${group.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg relative overflow-hidden">
+                    <img src="${group.image}" alt="${group.name} Icon" class="w-16 h-16 object-contain shadow-lg rounded-full">
+                </div>
+                <h3 class="text-lg font-bold text-gray-800 mb-2 text-elegant">${group.name}</h3>
+                <p class="text-gray-600 text-sm mb-4 text-beautiful">คลิกเพื่อดูรายวิชา</p>
+                <div class="inline-flex items-center text-blue-600 font-semibold text-sm bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">
+                    <span>เริ่มเรียน</span>
+                    <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(card);
+    });
+}
+
 
         /**
          * โหลดรายละเอียดวิชา/ครู (เดิมคือ loadSubjects)
