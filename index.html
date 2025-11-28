@@ -990,28 +990,39 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
         /**
          * อัปเดตการเน้นข้อความในเมนูนำทาง
          */
-        function ฟังก์ชันนร้มีผลต่อเส้นขีดใต้ปุ่มเมนูหรือไม่
+        function updateNavHighlight(pageId) {
+    const pageIdClean = pageId.split('/')[0] || 'home'; 
 
-function updateNavHighlight(pageId) {
-            const pageIdClean = pageId.split('/')[0] || 'home'; // ใช้แค่ส่วนแรกของ pageId
-            
-            // Reset all nav links
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('text-blue-600', 'font-semibold', 'border-b-2', 'border-blue-600', 'bg-blue-50');
-                link.classList.add('text-gray-700', 'hover:text-blue-600');
-            });
-            
-            // Highlight the active link (desktop and mobile)
-            document.querySelectorAll(`.nav-link"]`).forEach(link => {
-                link.classList.remove('text-gray-700', 'hover:text-blue-600');
-                link.classList.add('text-blue-600', 'font-semibold', 'border-b-2', 'border-blue-600');
-                
-                // สำหรับ Mobile ให้เพิ่มสีพื้นหลัง
-                if (link.parentElement.id === 'mobileMenu') {
-                    link.classList.add('bg-blue-50');
-                }
-            });
+    // 1. Reset all nav links (ต้องรีเซ็ตทั้งหมดก่อน)
+    document.querySelectorAll('.nav-link').forEach(link => {
+        // ลบคลาสที่เกี่ยวข้องกับ Highlight ออกทั้งหมด
+        link.classList.remove('text-blue-600', 'font-semibold', 'border-b-2', 'border-blue-600', 'bg-blue-50');
+        link.classList.add('text-gray-700', 'hover:text-blue-600');
+    });
+
+    // 2. Highlight the active link
+    document.querySelectorAll(`a[href="#${pageIdClean}"]`).forEach(link => {
+        link.classList.remove('text-gray-700', 'hover:text-blue-600');
+        
+        // **ส่วนที่แก้ไข: ตรวจสอบว่าเป็นลิงก์ใน Footer หรือไม่**
+        // สมมติว่า Footer มี ID คือ 'siteFooter'
+        const isFooterLink = link.closest('#siteFooter') !== null;
+        
+        // กำหนดคลาสไฮไลท์พื้นฐาน (สีตัวอักษรและ font-weight)
+        link.classList.add('text-blue-600', 'font-semibold');
+        
+        // **เพิ่มเส้นขีดใต้เฉพาะเมื่อไม่ใช่ลิงก์ใน Footer เท่านั้น**
+        if (!isFooterLink) {
+            link.classList.add('border-b-2', 'border-blue-600');
         }
+
+        // สำหรับ Mobile (ยังคงอยู่)
+        if (link.parentElement.id === 'mobileMenu') {
+            link.classList.add('bg-blue-50');
+        }
+    });
+}
+
 
 
         // =================================================================
