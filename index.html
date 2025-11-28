@@ -997,14 +997,7 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('text-blue-600', 'font-semibold', 'border-b-2', 'border-blue-600', 'bg-blue-50');
                 link.classList.add('text-gray-700', 'hover:text-blue-600');
-            });
             
-            // Highlight the active link (desktop and mobile)
-            document.querySelectorAll(`a[href="#${pageIdClean}"]`).forEach(link => {
-                link.classList.remove('text-gray-700', 'hover:text-blue-600');
-                link.classList.add('text-blue-600', 'font-semibold', 'border-b-2', 'border-blue-600');
-                
-                // สำหรับ Mobile ให้เพิ่มสีพื้นหลัง
                 if (link.parentElement.id === 'mobileMenu') {
                     link.classList.add('bg-blue-50');
                 }
