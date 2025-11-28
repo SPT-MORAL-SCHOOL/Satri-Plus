@@ -812,6 +812,7 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
         </div>
     </footer>
 
+<!-- Add Subject Modal -->
     <div id="addSubjectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">เพิ่มวิชาใหม่</h2>
@@ -821,33 +822,31 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
                     <input type="text" id="subjectName" name="subjectName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="mb-4">
-                    <label for="topicName" class="block text-sm font-medium text-gray-700 mb-2">ชื่อเรื่องย่อย/หัวข้อ</label>
+                    <label for="topicName" class="block text-sm font-medium text-gray-700 mb-2">ชื่อเรื่อง</label>
                     <input type="text" id="topicName" name="topicName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
-                 <div class="mb-4">
-                    <label for="subjectLink" class="block text-sm font-medium text-gray-700 mb-2">ลิงก์เนื้อหา/วิดีโอ (URL)</label>
+                <div class="mb-4">
+                    <label for="subjectLink" class="block text-sm font-medium text-gray-700 mb-2">ลิงก์</label>
                     <input type="url" id="subjectLink" name="subjectLink" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="mb-4">
-                    <label for="subjectDescription" class="block text-sm font-medium text-gray-700 mb-2">คำอธิบาย</label>
+                    <label for="subjectDescription" class="block text-sm font-medium text-gray-700 mb-2">รายละเอียด</label>
                     <textarea id="subjectDescription" name="subjectDescription" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                 </div>
                 <div class="mb-6">
                     <label for="subjectType" class="block text-sm font-medium text-gray-700 mb-2">ประเภท</label>
                     <select id="subjectType" name="subjectType" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="บทเรียน">บทเรียน</option>
+                        <option value="สื่อการเรียนการสอน">สื่อการเรียนการสอน</option>
                         <option value="แบบทดสอบ">แบบทดสอบ</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-gradient-green text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors">
-                    <i class="fas fa-plus mr-2"></i>เพิ่ม
-                </button>
+                <div class="flex space-x-4">
+                    <button type="submit" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">เพิ่ม</button>
+                    <button type="button" onclick="hideAddSubjectModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400">ยกเลิก</button>
+                </div>
             </form>
         </div>
     </div>
-
-    <div id="editTopicModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        </div>
 
 
     <script>
