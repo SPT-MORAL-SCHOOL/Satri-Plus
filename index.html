@@ -1026,7 +1026,7 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
             subjectGroupsData.forEach(group => {
                 const card = document.createElement('a');
                 card.href = `#subjects/${group.id}`;
-                card.className = `block ${group.color} text-white rounded-xl shadow-custom p-6 transition-all duration-300 transform hover:scale-[1.03] hover:shadow-hover relative overflow-hidden group`;
+                card.className = `bg-white block ${group.color} text-white rounded-xl shadow-custom p-6 transition-all duration-300 transform hover:scale-[1.03] hover:shadow-hover relative overflow-hidden group`;
                 // ใช้ navigateTo สำหรับการคลิก
                 card.onclick = (e) => {
                     e.preventDefault(); 
