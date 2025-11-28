@@ -990,29 +990,28 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
         /**
          * อัปเดตการเน้นข้อความในเมนูนำทาง
          */
-        function updateNavHighlight(pageId); 
+        function ฟังก์ชันนร้มีผลต่อเส้นขีดใต้ปุ่มเมนูหรือไม่
 
-    // 5. จัดการการโหลดเนื้อหาเฉพาะหน้า
-    if (pageId === 'subjects') {
-        loadSubjectGroups();
-    } else if (pageId === 'subjectDetail') {
-        const groupIdToLoad = subParameter;
-        
-        if (groupIdToLoad) {
-            currentSubjectGroup = groupIdToLoad;
-            loadSubjects(groupIdToLoad);
-        } else {
-            showPage('subjects'); 
-            return; 
+function updateNavHighlight(pageId) {
+            const pageIdClean = pageId.split('/')[0] || 'home'; // ใช้แค่ส่วนแรกของ pageId
+            
+            // Reset all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-blue-600', 'font-semibold', 'border-b-2', 'border-blue-600', 'bg-blue-50');
+                link.classList.add('text-gray-700', 'hover:text-blue-600');
+            });
+            
+            // Highlight the active link (desktop and mobile)
+            document.querySelectorAll(`.nav-link"]`).forEach(link => {
+                link.classList.remove('text-gray-700', 'hover:text-blue-600');
+                link.classList.add('text-blue-600', 'font-semibold', 'border-b-2', 'border-blue-600');
+                
+                // สำหรับ Mobile ให้เพิ่มสีพื้นหลัง
+                if (link.parentElement.id === 'mobileMenu') {
+                    link.classList.add('bg-blue-50');
+                }
+            });
         }
-    }
-
-    // Hide mobile menu
-    document.getElementById('mobileMenu').classList.add('hidden');
-
-    // เลื่อนไปด้านบนสุดอัตโนมัติ
-    window.scrollTo(0, 0);
-}
 
 
         // =================================================================
