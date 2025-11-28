@@ -187,9 +187,10 @@
     
 </head>
 <body class="bg-white">
-    <nav class="sticky-nav shadow-lg">
+<nav class="sticky-nav shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
                 <div class="flex items-center space-x-3">
                     <div class="flex items-center space-x-2">
                         <img src="https://img5.pic.in.th/file/secure-sv1/IMG_0310f4b22b3a3a8d0946.jpeg" alt="โรงเรียนสตรีพัทลุง" class="h-10 w-10 object-contain shadow-lg rounded-full bg-white p-1" onerror="this.src=''; this.alt='โลโก้โรงเรียน'; this.style.display='none';">
@@ -202,15 +203,21 @@
                     </div>
                 </div>
 
+                <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#home" onclick="navigateTo('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">หน้าหลัก</a>
-                    <a href="#about" onclick="navigateTo('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">เกี่ยวกับ</a>
-                    <a href="#subjects" onclick="navigateTo('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">กลุ่มสาระการเรียนรู้</a>
-                    <a href="#contact" onclick="navigateTo('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">ติดต่อ</a>
+                    <a href="#home" onclick="showPage('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 
+rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้าหลัก</a>
+<a href="#about" onclick="showPage('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-page-id="about">เกี่ยวกับ</a>
+<a href="#subjects" onclick="showPage('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-page-id="subjects">กลุ่มสาระการเรียนรู้</a>
+<a href="#contact" onclick="showPage('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-page-id="contact">ติดต่อ</a>
+
                     
+                    <!-- Auth Status -->
                     <div id="authStatus" class="flex items-center space-x-3">
-                        <a href="#login" id="loginBtn" onclick="navigateTo('login')" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">เข้าสู่ระบบ</a>
+                        <!-- Login Button (shown when not logged in) -->
+                        <a href="#login" id="loginBtn" onclick="showPage('login')" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"data-page-id="login">เข้าสู่ระบบ</a>
                         
+                        <!-- User Info (shown when logged in) -->
                         <div id="userInfo" class="hidden flex items-center space-x-3">
                             <div class="flex items-center space-x-2 bg-green-50 px-3 py-2 rounded-full border border-green-200">
                                 <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -224,6 +231,7 @@
                     </div>
                 </div>
 
+                <!-- Mobile Menu Button -->
                 <div class="md:hidden">
                     <button onclick="toggleMobileMenu()" class="text-gray-700 hover:text-blue-600 focus:outline-none">
                         <i class="fas fa-bars text-xl"></i>
@@ -231,16 +239,21 @@
                 </div>
             </div>
 
+            <!-- Mobile Menu -->
             <div id="mobileMenu" class="hidden md:hidden pb-4">
                 <div class="flex flex-col space-y-2">
-                    <a href="#home" onclick="navigateTo('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">หน้าหลัก</a>
-                    <a href="#about" onclick="navigateTo('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">เกี่ยวกับ</a>
-                    <a href="#subjects" onclick="navigateTo('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">กลุ่มสาระการเรียนรู้</a>
-                    <a href="#contact" onclick="navigateTo('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">ติดต่อ</a>
+                    <a href="#home" onclick="showPage('home')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้าหลัก</a>
+<a href="#about" onclick="showPage('about')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-page-id="about">เกี่ยวกับ</a>
+<a href="#subjects" onclick="showPage('subjects')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-page-id="subjects">กลุ่มสาระการเรียนรู้</a>
+<a href="#contact" onclick="showPage('contact')" class="nav-link text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-page-id="contact">ติดต่อ</a>
+
                     
+                    <!-- Mobile Auth Status -->
                     <div id="mobileAuthStatus">
-                        <a href="#login" id="mobileLoginBtn" onclick="navigateTo('login')" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 block">เข้าสู่ระบบ</a>
+                        <!-- Login Button (shown when not logged in) -->
+                        <a href="#login" id="mobileLoginBtn" onclick="showPage('login')" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 block"data-page-id="login">เข้าสู่ระบบ</a>
                         
+                        <!-- User Info (shown when logged in) -->
                         <div id="mobileUserInfo" class="hidden space-y-2">
                             <div class="flex items-center space-x-2 bg-green-50 px-3 py-2 rounded-md border border-green-200">
                                 <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -640,13 +653,32 @@
         </div>
     </main>
 
-    <footer class="bg-blue-800 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <img src="SPT-P.png" alt="Satri Plus" class="h-10 w-10 object-contain shadow-sm rounded-full bg-white p-1" onerror="this.src=''; this.alt='Satri Plus'; this.style.display='none';">
-                        <h3 class="text-2xl font-bold text-elegant">Satri Plus</h3>
+    <!-- Footer -->
+    <footer class="relative bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white py-16 overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="flower-pattern h-full w-full"></div>
+        </div>
+        
+        <!-- Floating Elements -->
+        <div class="absolute top-10 left-10 w-20 h-20 bg-blue-500 rounded-full opacity-20 floating-animation"></div>
+        <div class="absolute top-20 right-20 w-16 h-16 bg-purple-500 rounded-full opacity-20 floating-animation" style="animation-delay: 1s;"></div>
+        <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-pink-500 rounded-full opacity-20 floating-animation" style="animation-delay: 2s;"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Top Section -->
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <!-- School Info -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center mb-6">
+                        <div class="flex items-center space-x-2 mr-4">
+                            <img src="https://img5.pic.in.th/file/secure-sv1/IMG_0310f4b22b3a3a8d0946.jpeg" alt="โรงเรียนสตรีพัทลุง" class="h-12 w-12 object-contain rounded-full bg-white p-2 shadow-lg" onerror="this.src=''; this.alt='โลโก้โรงเรียน'; this.style.display='none';">
+                            <div class="w-2 h-8 bg-gradient-to-b from-blue-400 to-purple-400 rounded-full"></div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-elegant">🌟 Satri Plus</h3>
+                            <p class="text-blue-300 text-sm font-medium">Anywhere Anytime</p>
+                        </div>
                     </div>
                     <p class="text-gray-300 leading-relaxed mb-6 text-beautiful">
                         🏫 แหล่งรวบรวมองค์ความรู้ทุกศาสตร์ตาม 8 กลุ่มสาระการเรียนรู้ เพื่อเพิ่มประสิทธิภาพในการเรียนรู้ของนักเรียน
@@ -663,9 +695,11 @@
                     </div>
                 </div>
 
+                <!-- Contact Info -->
                 <div>
                     <h3 class="text-xl font-bold mb-6 text-elegant flex items-center">
-                        <i class="fas fa-map-marker-alt text-red-400 mr-2"></i> 📍 ติดต่อเรา
+                        <i class="fas fa-map-marker-alt text-red-400 mr-2"></i>
+                        📍 ติดต่อเรา
                     </h3>
                     <div class="space-y-4">
                         <div class="flex items-start space-x-3 group">
@@ -680,53 +714,85 @@
                                 </p>
                             </div>
                         </div>
+                        
                         <div class="flex items-center space-x-3 group">
                             <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center group-hover:bg-green-500/30 transition-colors">
                                 <i class="fas fa-phone text-green-400 text-sm"></i>
                             </div>
                             <p class="text-gray-300 text-sm">📞 074-613-023</p>
                         </div>
+                        
                         <div class="flex items-center space-x-3 group">
                             <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
                                 <i class="fas fa-envelope text-purple-400 text-sm"></i>
                             </div>
-                            <p class="text-gray-300 text-sm">📧 satriphatthalung@spt.ac.th</p>
+                            <a href="mailto:satriphatthalung@spt.ac.th>
+                            <p class="text-gray-300 text-sm">📧 satriphatthalung@spt.ac.th </p>
+                            </a>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3 group">
+                            <div class="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center group-hover:bg-orange-500/30 transition-colors">
+                                <i class="fas fa-clock text-orange-400 text-sm"></i>
+                            </div>
+                            <p class="text-gray-300 text-sm">⏰ จ.-ศ. 08:00-16:30</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- Quick Links -->
                 <div>
                     <h3 class="text-xl font-bold mb-6 text-elegant flex items-center">
-                        <i class="fas fa-link text-yellow-400 mr-2"></i> 🔗 ลิงก์ด่วน
+                        <i class="fas fa-sitemap text-blue-400 mr-2"></i>
+                        🔗 เมนูหลัก
                     </h3>
-                    <div class="space-y-3 text-sm">
-                        <a href="#home" onclick="navigateTo('home')" class="block text-gray-300 hover:text-white transition-colors">หน้าหลัก</a>
-                        <a href="#about" onclick="navigateTo('about')" class="block text-gray-300 hover:text-white transition-colors">เกี่ยวกับโรงเรียน</a>
-                        <a href="#subjects" onclick="navigateTo('subjects')" class="block text-gray-300 hover:text-white transition-colors">กลุ่มสาระการเรียนรู้</a>
-                        <a href="#contact" onclick="navigateTo('contact')" class="block text-gray-300 hover:text-white transition-colors">ติดต่อเรา</a>
-                        <a href="https://www.spt.ac.th/" target="_blank" rel="noopener noreferrer" class="block text-gray-300 hover:text-white transition-colors">เว็บไซต์หลักโรงเรียน</a>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="text-xl font-bold mb-6 text-elegant flex items-center">
-                        <i class="fas fa-share-alt text-cyan-400 mr-2"></i> 📱 โซเชียล
-                    </h3>
-                    <div class="flex space-x-4">
-                        <a href="https://www.facebook.com/sptchannel" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg">
-                            <i class="fab fa-facebook text-white"></i>
-                        </a>
-                        <a href="https://www.instagram.com/sptschool_official?igsh=MWM0NWl2MmF1cXhvdw==" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg">
-                            <i class="fab fa-instagram text-white"></i>
-                        </a>
-                        <a href="https://www.tiktok.com/@spt_school?_t=ZS-90tOrK4pFtH&_r=1" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-black hover:bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg">
-                            <i class="fab fa-tiktok text-white"></i>
-                        </a>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="#home" onclick="showPage('home')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
+                                <div class="w-2 h-2 bg-blue-400 rounded-full group-hover:w-4 transition-all duration-300"></div>
+                                <span class="group-hover:translate-x-1 transition-transform duration-300">🏠 หน้าหลัก</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#about" onclick="showPage('about')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
+                                <div class="w-2 h-2 bg-green-400 rounded-full group-hover:w-4 transition-all duration-300"></div>
+                                <span class="group-hover:translate-x-1 transition-transform duration-300">ℹ️ เกี่ยวกับ</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#subjects" onclick="showPage('subjects')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
+                                <div class="w-2 h-2 bg-purple-400 rounded-full group-hover:w-4 transition-all duration-300"></div>
+                                <span class="group-hover:translate-x-1 transition-transform duration-300">📚 กลุ่มสาระการเรียนรู้</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#contact" onclick="showPage('contact')" class="flex items-center space-x-3 text-gray-300 hover:text-white group transition-all duration-300">
+                                <div class="w-2 h-2 bg-pink-400 rounded-full group-hover:w-4 transition-all duration-300"></div>
+                                <span class="group-hover:translate-x-1 transition-transform duration-300">📞 ติดต่อ</span>
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Social Media -->
+                    <div class="mt-8">
+                        <h4 class="text-lg font-semibold mb-4 text-elegant">🌐 ติดตามเรา</h4>
+                        <div class="flex space-x-3">
+                            <a href="https://www.facebook.com/spt.ac.th" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg">
+                                <i class="fab fa-facebook text-white"></i>
+                            </a>
+                            <a href="https://www.instagram.com/sptschool_official?igsh=MWM0NWl2MmF1cXhvdw==" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg">
+                                <i class="fab fa-instagram text-white"></i>
+                            </a>
+                            <a href="https://www.tiktok.com/@spt_school?_t=ZS-90tOrK4pFtH&_r=1" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-black hover:bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg">
+                                <i class="fab fa-tiktok text-white"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="relative mt-12 mb-8">
+            <!-- Divider -->
+            <div class="relative mb-8">
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t border-gradient-to-r from-transparent via-white/20 to-transparent"></div>
                 </div>
@@ -737,6 +803,7 @@
                 </div>
             </div>
 
+            <!-- Bottom Section -->
             <div class="text-center">
                 <div class="text-gray-400 text-sm">
                     &copy; โรงเรียนสตรีพัทลุง | Satri Phatthalung School
@@ -966,21 +1033,22 @@
                     navigateTo(`subjects/${group.id}`);
                 };
                 
+                card.style.animationDelay = `${index * 0.1}s`;
+                
                 card.innerHTML = `
-                    <div class="absolute inset-0 bg-black opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                    <div class="relative z-10 flex items-center justify-between">
-                        <div class="flex-shrink-0">
-                            <i class="${group.icon} text-4xl group-hover:rotate-6 transition-transform"></i>
+                    <div class="text-center relative">
+                        <div class="w-20 h-20 ${group.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg relative overflow-hidden">
+                            <img src="${group.image}" alt="${group.name} Icon" class="w-16 h-16 object-contain shadow-lg rounded-full">
                         </div>
-                        <div class="text-right">
-                            <h3 class="text-2xl font-bold mb-1">${group.name}</h3>
-                            <p class="text-sm font-light">คลิกเพื่อดูรายละเอียด</p>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2 text-elegant">${group.name}</h3>
+                        <p class="text-gray-600 text-sm mb-4 text-beautiful">คลิกเพื่อดูรายวิชา</p>
+                        <div class="inline-flex items-center text-blue-600 font-semibold text-sm bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">
+                            <span>เริ่มเรียน</span>
+                            <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
                         </div>
-                    </div>
-                    <div class="absolute -bottom-4 -right-4 w-20 h-20 opacity-30">
-                        <i class="${group.icon} text-8xl"></i>
                     </div>
                 `;
+                
                 container.appendChild(card);
             });
         }
