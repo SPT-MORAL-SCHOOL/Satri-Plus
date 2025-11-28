@@ -990,19 +990,29 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
         /**
          * อัปเดตการเน้นข้อความในเมนูนำทาง
          */
-        function updateNavHighlight(pageId) {
-            const pageIdClean = pageId.split('/')[0] || 'home'; // ใช้แค่ส่วนแรกของ pageId
-            
-            // Reset all nav links
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('text-blue-600', 'font-semibold', 'border-b-2', 'border-blue-600', 'bg-blue-50');
-                link.classList.add('text-gray-700', 'hover:text-blue-600');
-            
-                if (link.parentElement.id === 'mobileMenu') {
-                    link.classList.add('bg-blue-50');
-                }
-            });
+        function updateNavHighlight(pageId); 
+
+    // 5. จัดการการโหลดเนื้อหาเฉพาะหน้า
+    if (pageId === 'subjects') {
+        loadSubjectGroups();
+    } else if (pageId === 'subjectDetail') {
+        const groupIdToLoad = subParameter;
+        
+        if (groupIdToLoad) {
+            currentSubjectGroup = groupIdToLoad;
+            loadSubjects(groupIdToLoad);
+        } else {
+            showPage('subjects'); 
+            return; 
         }
+    }
+
+    // Hide mobile menu
+    document.getElementById('mobileMenu').classList.add('hidden');
+
+    // เลื่อนไปด้านบนสุดอัตโนมัติ
+    window.scrollTo(0, 0);
+}
 
 
         // =================================================================
