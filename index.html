@@ -1250,13 +1250,6 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
         // --- CRUD Functions ---
 
         function showAddSubjectModal() {
-            // Reset form for adding
-            const form = document.getElementById('addSubjectForm');
-            form.reset();
-            form.onsubmit = handleAddSubject;
-            document.querySelector('#addSubjectModal h2').textContent = 'เพิ่มวิชาใหม่';
-            document.querySelector('#addSubjectModal button[type="submit"]').innerHTML = '<i class="fas fa-plus mr-2"></i>เพิ่ม';
-
             document.getElementById('addSubjectModal').classList.remove('hidden');
             document.getElementById('addSubjectModal').classList.add('flex');
         }
@@ -1264,32 +1257,66 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
         function hideAddSubjectModal() {
             document.getElementById('addSubjectModal').classList.add('hidden');
             document.getElementById('addSubjectModal').classList.remove('flex');
+            document.getElementById('addSubjectForm').reset();
         }
 
+        // Subject CRUD operations
         async function handleAddSubject(event) {
             event.preventDefault();
+            
             const formData = new FormData(event.target);
-            const topicData = {
-                group: currentSubjectGroup, // Use the current group ID
+            const subjectData = {
                 subjectName: formData.get('subjectName'),
-                name: formData.get('topicName'), // Use 'name' for topic name
+                name: formData.get('topicName'),
                 link: formData.get('subjectLink'),
                 description: formData.get('subjectDescription'),
                 type: formData.get('subjectType'),
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                group: currentSubjectGroup,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             
             try {
-                await db.collection('subjects').add(topicData);
+                await db.collection('subjects').add(subjectData);
                 hideAddSubjectModal();
-                // Reload the current detail page
-                loadTeacherDetail(currentSubjectGroup); 
-                showMessage('เพิ่มข้อมูลเรียบร้อยแล้ว', 'success');
+                loadSubjects(currentSubjectGroup);
+                showMessage('เพิ่มเรื่องเรียบร้อยแล้ว', 'success');
             } catch (error) {
                 console.error('Error adding subject:', error);
-                showMessage('เกิดข้อผิดพลาดในการเพิ่มข้อมูล', 'error');
+                showMessage('เกิดข้อผิดพลาดในการเพิ่มเรื่อง', 'error');
             }
+        }
+
+        async function deleteTopic(id) {
+            // Create custom confirmation modal instead of browser confirm
+            const confirmModal = document.createElement('div');
+            confirmModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            confirmModal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-sm mx-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">ยืนยันการลบ</h3>
+                    <p class="text-gray-600 mb-6">คุณต้องการลบเรื่องนี้หรือไม่?</p>
+                    <div class="flex space-x-4">
+                        <button onclick="confirmDelete('${id}')" class="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">ลบ</button>
+                        <button onclick="cancelDelete()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400">ยกเลิก</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmModal);
+            
+            window.confirmDelete = async function(topicId) {
+                try {
+                    await db.collection('subjects').doc(topicId).delete();
+                    loadSubjects(currentSubjectGroup);
+                    showMessage('ลบเรื่องเรียบร้อยแล้ว', 'success');
+                } catch (error) {
+                    console.error('Error deleting topic:', error);
+                    showMessage('เกิดข้อผิดพลาดในการลบเรื่อง', 'error');
+                }
+                document.body.removeChild(confirmModal);
+            };
+            
+            window.cancelDelete = function() {
+                document.body.removeChild(confirmModal);
+            };
         }
 
         async function editTopic(id) {
@@ -1299,32 +1326,36 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
                     showMessage('ไม่พบข้อมูลที่ต้องการแก้ไข', 'error');
                     return;
                 }
+                
                 const topic = doc.data();
                 
                 // Fill form with existing data
                 document.getElementById('subjectName').value = topic.subjectName || '';
-                document.getElementById('topicName').value = topic.name || topic.topicName || '';
+                document.getElementById('topicName').value = topic.name || '';
                 document.getElementById('subjectLink').value = topic.link || '';
                 document.getElementById('subjectDescription').value = topic.description || '';
                 document.getElementById('subjectType').value = topic.type || '';
                 
                 // Change form submit handler to update instead of add
                 const form = document.getElementById('addSubjectForm');
-                form.onsubmit = function(event) { handleUpdateTopic(event, id); };
+                form.onsubmit = function(event) {
+                    handleUpdateTopic(event, id);
+                };
                 
                 // Change modal title
                 document.querySelector('#addSubjectModal h2').textContent = 'แก้ไขข้อมูล';
-                document.querySelector('#addSubjectModal button[type="submit"]').innerHTML = '<i class="fas fa-save mr-2"></i>บันทึก';
+                document.querySelector('#addSubjectModal button[type="submit"]').textContent = 'บันทึก';
+                
                 showAddSubjectModal();
-
             } catch (error) {
                 console.error('Error loading topic for edit:', error);
                 showMessage('เกิดข้อผิดพลาดในการโหลดข้อมูล', 'error');
             }
         }
-
+        
         async function handleUpdateTopic(event, id) {
             event.preventDefault();
+            
             const formData = new FormData(event.target);
             const topicData = {
                 subjectName: formData.get('subjectName'),
@@ -1334,40 +1365,27 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
                 type: formData.get('subjectType'),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
-
+            
             try {
                 await db.collection('subjects').doc(id).update(topicData);
                 hideAddSubjectModal();
-                loadTeacherDetail(currentSubjectGroup); 
+                loadSubjects(currentSubjectGroup);
                 showMessage('แก้ไขข้อมูลเรียบร้อยแล้ว', 'success');
                 
-                // Reset form handler for next add/edit
+                // Reset form handler
                 document.getElementById('addSubjectForm').onsubmit = handleAddSubject;
                 document.querySelector('#addSubjectModal h2').textContent = 'เพิ่มวิชาใหม่';
-                document.querySelector('#addSubjectModal button[type="submit"]').innerHTML = '<i class="fas fa-plus mr-2"></i>เพิ่ม';
-
+                document.querySelector('#addSubjectModal button[type="submit"]').textContent = 'เพิ่ม';
             } catch (error) {
                 console.error('Error updating topic:', error);
                 showMessage('เกิดข้อผิดพลาดในการแก้ไขข้อมูล', 'error');
             }
         }
 
-        async function deleteTopic(id) {
-            if (!confirm('ยืนยันที่จะลบหัวข้อนี้?')) return;
-            try {
-                await db.collection('subjects').doc(id).delete();
-                loadTeacherDetail(currentSubjectGroup); 
-                showMessage('ลบข้อมูลเรียบร้อยแล้ว', 'success');
-            } catch (error) {
-                console.error('Error deleting topic:', error);
-                showMessage('เกิดข้อผิดพลาดในการลบข้อมูล', 'error');
-            }
-        }
-
-        // --- Authentication Functions ---
-
+        // Authentication functions
         async function handleLogin(event) {
             event.preventDefault();
+            
             const formData = new FormData(event.target);
             const email = formData.get('email');
             const password = formData.get('password');
@@ -1376,10 +1394,48 @@ rounded-md text-sm font-medium transition-colors" data-page-id="home">หน้�
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 currentUser = userCredential.user;
                 showMessage('เข้าสู่ระบบเรียบร้อยแล้ว', 'success');
-                navigateTo('home'); // Redirect to home after successful login
+                setTimeout(() => showPage('home'), 1500);
             } catch (error) {
                 console.error('Login error:', error);
-                showMessage('เข้าสู่ระบบไม่สำเร็จ: โปรดตรวจสอบอีเมลและรหัสผ่าน', 'error');
+                showMessage('อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'error');
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await auth.signOut();
+                currentUser = null;
+                showPage('home');
+                
+                // Show success message using custom modal instead of alert
+                const successModal = document.createElement('div');
+                successModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                successModal.innerHTML = `
+                    <div class="bg-white rounded-lg p-6 max-w-sm mx-4 text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <i class="fas fa-check text-green-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">ออกจากระบบเรียบร้อย</h3>
+                        <p class="text-gray-600 mb-4">ขอบคุณที่ใช้บริการ</p>
+                        <button onclick="closeSuccessModal()" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">ตกลง</button>
+                    </div>
+                `;
+                document.body.appendChild(successModal);
+                
+                window.closeSuccessModal = function() {
+                    document.body.removeChild(successModal);
+                };
+                
+                // Auto close after 3 seconds
+                setTimeout(() => {
+                    if (document.body.contains(successModal)) {
+                        document.body.removeChild(successModal);
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Logout error:', error);
+                showMessage('เกิดข้อผิดพลาดในการออกจากระบบ', 'error');
             }
         }
 
