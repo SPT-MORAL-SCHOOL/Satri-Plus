@@ -1218,59 +1218,75 @@ function toggleSubject(id) {
 // 2. ฟังก์ชันสร้าง Card รายวิชา (แก้ไขเพิ่ม Class สำหรับจับคู่)
 // ==========================================
 function createSubjectCard(subjectName, topics) {
-    // สร้าง ID จากรหัสตัวอักษร (Unicode) เพื่อให้รองรับภาษาไทยและไม่ซ้ำกันแน่นอน
+    // Create Safe ID for Unicode support
     const safeId = 'subject-' + Array.from(subjectName).map(c => c.charCodeAt(0)).join('');
 
     const card = document.createElement('div');
-    // Main Card Style: ใช้สไตล์เดิมของ Satri Plus
-    card.className = 'bg-white rounded-2xl shadow-custom card-hover col-span-full border-l-4 border-blue-500 overflow-hidden mb-6';
+    // Main Container Style
+    card.className = 'bg-white rounded-2xl shadow-custom card-hover col-span-full border-l-4 border-blue-500 overflow-hidden mb-8';
 
-    // --- ส่วนหัว (Header) ---
+    // --- Header (Clickable to toggle) ---
     const headerHtml = `
-        <div class="p-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 transition-colors duration-300 select-none" onclick="toggleSubject('${safeId}')">
-            <h3 class="text-2xl font-bold text-gray-800 text-elegant flex items-center">
-                <span class="w-2 h-8 bg-blue-500 rounded-full mr-3"></span>
-                ${subjectName}
-                <span class="ml-4 text-sm font-normal text-gray-500 bg-gray-100 px-3 py-1 rounded-full border border-gray-200">
-                    ${topics.length} เรื่อง
+        <div class="p-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 transition-colors duration-300 select-none border-b border-gray-100" onclick="toggleSubject('${safeId}')">
+            <div class="flex items-center">
+                <div class="w-1.5 h-8 bg-blue-500 rounded-full mr-4"></div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800">${subjectName}</h3>
+                    <p class="text-sm text-gray-500 mt-1">เลือกเรื่องที่ต้องการเรียน</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                 <span class="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full border border-gray-200">
+                    ${topics.length} บทเรียน
                 </span>
-            </h3>
-            <div class="subject-icon-arrow w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center transition-transform duration-300" id="icon-${safeId}">
-                <i class="fas fa-chevron-down text-blue-600"></i>
+                <div class="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center transition-transform duration-300" id="icon-${safeId}">
+                    <i class="fas fa-chevron-down text-blue-600 text-sm"></i>
+                </div>
             </div>
         </div>
     `;
 
-    // --- ส่วนเนื้อหา (Content) ---
-    // เพิ่ม class subject-content-section เพื่อให้ฟังก์ชัน toggleSubject เรียกใช้ได้
-    let topicsHtml = `<div id="content-${safeId}" class="subject-content-section hidden bg-gray-50/50 p-8 border-t border-gray-100 transition-all duration-300">`;
-    topicsHtml += `<div class="grid gap-6">`; 
+    // --- Content (Grid Layout) ---
+    // Using grid-cols-1 for mobile, 2 for tablet, 3 for desktop to match image
+    let topicsHtml = `<div id="content-${safeId}" class="subject-content-section hidden bg-gray-50 p-6 md:p-8 transition-all duration-300">`;
+    topicsHtml += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">`; 
 
     topics.forEach((topic, index) => {
-        const typeColor = topic.type === 'แบบทดสอบ' ? 'bg-gradient-green text-white' : 'bg-gradient-blue text-white';
-        const typeEmoji = topic.type === 'แบบทดสอบ' ? '📝' : '📚';
-        const topicDisplay = topic.name || topic.topicName || 'หัวข้อ';
+        // Determine Badge Color/Icon based on type (defaulting to the image style)
+        const isTest = topic.type === 'แบบทดสอบ';
+        const typeLabel = topic.type || 'สื่อการเรียนการสอน';
+        const typeIcon = isTest ? 'fa-clipboard-check' : 'fa-book';
+        const badgeColor = isTest ? 'bg-blue-600' : 'bg-blue-600'; // Using solid blue as per image
         
+        const topicName = topic.name || topic.topicName || 'หัวข้อ';
+        const description = topic.description || 'ไม่มีรายละเอียด';
+
         topicsHtml += `
-            <div class="bg-white rounded-xl p-6 border border-gray-100 hover:border-blue-300 shadow-sm hover:shadow-md transition-all duration-300" style="animation-delay: ${index * 0.05}s">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-3">
-                    <h4 class="font-bold text-gray-800 text-lg flex-1">${topicDisplay}</h4>
-                    <span class="inline-flex items-center px-3 py-1 text-sm font-bold rounded-full ${typeColor} shadow-sm shrink-0">
-                        <span class="mr-1">${typeEmoji}</span> ${topic.type}
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all duration-300 flex flex-col h-full relative group">
+                
+                <div class="flex justify-between items-start gap-3 mb-2">
+                    <h4 class="font-bold text-gray-800 text-lg leading-tight flex-1 line-clamp-2">${topicName}</h4>
+                    <span class="inline-flex items-center px-3 py-1 text-[10px] font-bold rounded-full ${badgeColor} text-white shadow-sm shrink-0">
+                        <i class="fas ${typeIcon} mr-1.5"></i> ${typeLabel}
                     </span>
                 </div>
-                <p class="text-gray-600 mb-4 leading-relaxed text-sm">${topic.description || 'ไม่มีรายละเอียด'}</p>
-                <div class="flex flex-wrap justify-between items-center gap-3">
-                    <a href="${topic.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-gradient-purple text-white px-5 py-2 rounded-full font-medium text-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                        <i class="fas fa-play mr-2"></i>เริ่มเรียน
+
+                <p class="text-gray-400 text-sm mb-6 line-clamp-2 flex-grow font-light">
+                    ${description}
+                </p>
+
+                <div class="flex justify-between items-center mt-auto">
+                    <a href="${topic.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-[#8B5CF6] text-white px-6 py-2 rounded-full font-medium text-sm hover:bg-[#7C3AED] hover:shadow-lg transition-all duration-300 transform active:scale-95">
+                        <i class="fas fa-play text-[10px] mr-2"></i> เริ่มเรียน
                     </a>
+
                     ${typeof currentUser !== 'undefined' && currentUser ? `
-                        <div class="flex space-x-2">
-                            <button onclick="editTopic('${topic.id}')" class="text-yellow-500 hover:text-yellow-600 p-2 rounded-full hover:bg-yellow-50 transition-colors" title="แก้ไข">
-                                <i class="fas fa-edit"></i>
+                        <div class="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <button onclick="editTopic('${topic.id}')" class="w-8 h-8 flex items-center justify-center rounded-full text-yellow-500 hover:bg-yellow-50 transition-colors" title="แก้ไข">
+                                <i class="fas fa-pen text-xs"></i>
                             </button>
-                            <button onclick="deleteTopic('${topic.id}')" class="text-red-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors" title="ลบ">
-                                <i class="fas fa-trash-alt"></i>
+                            <button onclick="deleteTopic('${topic.id}')" class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 transition-colors" title="ลบ">
+                                <i class="fas fa-trash text-xs"></i>
                             </button>
                         </div>
                     ` : ''}
@@ -1279,7 +1295,7 @@ function createSubjectCard(subjectName, topics) {
         `;
     });
 
-    topicsHtml += `</div></div>`; // ปิด Grid และ Content
+    topicsHtml += `</div></div>`; // Close grid and content wrapper
 
     card.innerHTML = headerHtml + topicsHtml;
     return card;
