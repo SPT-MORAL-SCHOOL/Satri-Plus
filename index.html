@@ -1218,14 +1218,14 @@ function toggleSubject(id) {
 // 2. ฟังก์ชันสร้าง Card รายวิชา (แก้ไขเพิ่ม Class สำหรับจับคู่)
 // ==========================================
 function createSubjectCard(subjectName, topics) {
-    // Create Safe ID for Unicode support
+    // สร้าง ID จากรหัสตัวอักษร
     const safeId = 'subject-' + Array.from(subjectName).map(c => c.charCodeAt(0)).join('');
 
     const card = document.createElement('div');
     // Main Container Style
     card.className = 'bg-white rounded-2xl shadow-custom card-hover col-span-full border-l-4 border-blue-500 overflow-hidden mb-8';
 
-    // --- Header (Clickable to toggle) ---
+    // --- Header ---
     const headerHtml = `
         <div class="p-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 transition-colors duration-300 select-none border-b border-gray-100" onclick="toggleSubject('${safeId}')">
             <div class="flex items-center">
@@ -1246,18 +1246,29 @@ function createSubjectCard(subjectName, topics) {
         </div>
     `;
 
-    // --- Content (Grid Layout) ---
-    // Using grid-cols-1 for mobile, 2 for tablet, 3 for desktop to match image
+    // --- Content (Grid) ---
     let topicsHtml = `<div id="content-${safeId}" class="subject-content-section hidden bg-gray-50 p-6 md:p-8 transition-all duration-300">`;
     topicsHtml += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">`; 
 
     topics.forEach((topic, index) => {
-        // Determine Badge Color/Icon based on type (defaulting to the image style)
+        // --- 🎨 ส่วนกำหนดสีและไอคอนแยกตามประเภท ---
         const isTest = topic.type === 'แบบทดสอบ';
-        const typeLabel = topic.type || 'สื่อการเรียนการสอน';
-        const typeIcon = isTest ? 'fa-clipboard-check' : 'fa-book';
-        const badgeColor = isTest ? 'bg-blue-600' : 'bg-blue-600'; // Using solid blue as per image
         
+        // กำหนดค่าตัวแปรตามประเภท
+        const config = isTest ? {
+            label: 'แบบทดสอบ',
+            badgeClass: 'bg-orange-500 text-white', // สีส้มสำหรับแบบทดสอบ
+            icon: 'fa-clipboard-check',
+            btnText: 'ทำแบบทดสอบ',
+            btnIcon: 'fa-pen'
+        } : {
+            label: topic.type || 'สื่อการเรียนการสอน',
+            badgeClass: 'bg-blue-600 text-white',   // สีน้ำเงินสำหรับสื่อฯ
+            icon: 'fa-book-open',
+            btnText: 'เริ่มเรียน',
+            btnIcon: 'fa-play'
+        };
+
         const topicName = topic.name || topic.topicName || 'หัวข้อ';
         const description = topic.description || 'ไม่มีรายละเอียด';
 
@@ -1266,8 +1277,8 @@ function createSubjectCard(subjectName, topics) {
                 
                 <div class="flex justify-between items-start gap-3 mb-2">
                     <h4 class="font-bold text-gray-800 text-lg leading-tight flex-1 line-clamp-2">${topicName}</h4>
-                    <span class="inline-flex items-center px-3 py-1 text-[10px] font-bold rounded-full ${badgeColor} text-white shadow-sm shrink-0">
-                        <i class="fas ${typeIcon} mr-1.5"></i> ${typeLabel}
+                    <span class="inline-flex items-center px-3 py-1 text-[10px] font-bold rounded-full ${config.badgeClass} shadow-sm shrink-0">
+                        <i class="fas ${config.icon} mr-1.5"></i> ${config.label}
                     </span>
                 </div>
 
@@ -1277,7 +1288,7 @@ function createSubjectCard(subjectName, topics) {
 
                 <div class="flex justify-between items-center mt-auto">
                     <a href="${topic.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-[#8B5CF6] text-white px-6 py-2 rounded-full font-medium text-sm hover:bg-[#7C3AED] hover:shadow-lg transition-all duration-300 transform active:scale-95">
-                        <i class="fas fa-play text-[10px] mr-2"></i> เริ่มเรียน
+                        <i class="fas ${config.btnIcon} text-[10px] mr-2"></i> ${config.btnText}
                     </a>
 
                     ${typeof currentUser !== 'undefined' && currentUser ? `
@@ -1295,11 +1306,11 @@ function createSubjectCard(subjectName, topics) {
         `;
     });
 
-    topicsHtml += `</div></div>`; // Close grid and content wrapper
-
+    topicsHtml += `</div></div>`;
     card.innerHTML = headerHtml + topicsHtml;
     return card;
 }
+
 
 
 
