@@ -1124,7 +1124,7 @@ function loadSubjectGroups() {
                 <div class="absolute inset-0 bg-gradient-to-r ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500"></div>
                 
                 <div class="p-6 flex items-start space-x-4 relative z-10">
-                    <div class="${group.color || 'bg-blue-500'} w-16 h-16 rounded-3xl flex-shrink-0 flex items-center justify-center text-white text-2xl shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 overflow-hidden">
+                    <div class="${group.color || 'bg-blue-500'} w-16 h-16 rounded-2xl flex-shrink-0 flex items-center justify-center text-white text-2xl shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 overflow-hidden">
                         ${group.image 
                             ? `<img src="${group.image}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"> <i class="fas ${group.icon} hidden"></i>` 
                             : `<i class="fas ${group.icon}"></i>`
