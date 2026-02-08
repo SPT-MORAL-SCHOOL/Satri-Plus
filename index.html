@@ -961,10 +961,45 @@ function handleRoute() {
     } else if (mainPage === 'about') {
         pageToShow = 'aboutPage';
         title = 'Satri Plus | เกี่ยวกับเรา';
+    }     // ... (ต่อจาก else if mainPage === 'about' ...)
+
     } else if (mainPage === 'subjects') {
-        pageToShow = 'subjectsPage';
-        title = 'Satri Plus | กลุ่มสาระการเรียนรู้';
-        // *เพิ่มเติม: ถ้ามี subPage เช่น /subjects/math อาจจะเรียก loadTeacherDetail(subPage) ตรงนี้ได้
+        
+        // เช็คว่ามี subPage หรือไม่ (แทน param ในโค้ดเก่า)
+        // เช่น URL: /subjects/thai -> subPage คือ 'thai'
+        if (subPage) {
+            // === กรณีเป็นหน้ารายละเอียด (มี param) ===
+            pageToShow = 'detailPage'; // ชื่อ ID ของ div หน้ารายละเอียด
+            
+            // หาชื่อกลุ่มสาระมาใส่ Title (ต้องมีตัวแปร subjectGroupsData อยู่ในโค้ด)
+            const groupInfo = (typeof subjectGroupsData !== 'undefined') 
+                ? subjectGroupsData.find(g => g.id === subPage) 
+                : null;
+                
+            title = `Satri Plus | ${groupInfo ? groupInfo.name : 'รายละเอียด'}`;
+            
+            // โหลดข้อมูลรายละเอียด (เรียกฟังก์ชันเดิมของคุณ)
+            if (typeof loadTeacherDetail === 'function') {
+                loadTeacherDetail(subPage).catch(error => {
+                    console.error("Error loading teacher detail for:", subPage, error);
+                    navigateTo('subjects'); // ถ้าพัง ให้กลับไปหน้าหลัก
+                });
+            }
+
+        } else {
+            // === กรณีเป็นหน้าหลักกลุ่มสาระ (ไม่มี param) ===
+            // เส้นทาง: /subjects
+            pageToShow = 'subjectsPage'; // ชื่อ ID ของ div หน้าหลัก
+            title = 'Satri Plus | กลุ่มสาระการเรียนรู้';
+            
+            // โหลดข้อมูลกลุ่มสาระ (เรียกฟังก์ชันเดิมของคุณ)
+            if (typeof loadSubjectGroups === 'function') {
+                loadSubjectGroups(); 
+            }
+        }
+        
+    // ... (ต่อด้วย else if mainPage === 'contact' ...)
+
     } else if (mainPage === 'contact') {
         pageToShow = 'contactPage';
         title = 'Satri Plus | ติดต่อเรา';
