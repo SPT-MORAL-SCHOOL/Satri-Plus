@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการผู้ใช้งาน | Satri Plus</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f3f4f6; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .loader {
+            border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #3b82f6;
+            width: 24px; height: 24px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="text-gray-700 h-screen flex flex-col overflow-hidden">
+
+    <div id="global-loader" class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90 transition-opacity duration-300">
+        <div class="flex flex-col items-center">
+            <div class="loader w-12 h-12 border-4 mb-4" style="border-top-color: #2563eb;"></div>
+            <p class="text-blue-600 font-semibold animate-pulse">กำลังโหลดข้อมูล...</p>
+        </div>
+    </div>
+
+    <div id="login-page" class="hidden flex-grow flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md fade-in border border-gray-100 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-100 rounded-full blur-2xl opacity-50"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-pink-100 rounded-full blur-2xl opacity-50"></div>
+
+            <div class="text-center mb-8 relative z-10">
+                <div class="flex justify-center items-center gap-4 mb-4">
+                    <img src="https://img5.pic.in.th/file/secure-sv1/IMG_0310f4b22b3a3a8d0946.jpeg" alt="School Logo" class="h-16 w-16 object-cover rounded-full shadow-md border-2 border-white">
+                    <img src="https://satri-plus.vercel.app/SPT-P.png" alt="Project Logo" class="h-16 w-16 object-contain drop-shadow-md">
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">เข้าสู่ระบบ</h1>
+                <p class="text-gray-500 text-sm">ระบบจัดการข้อมูล Satri Plus</p>
+            </div>
+
+            <form id="login-form" class="space-y-5 relative z-10">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1 pl-1">อีเมล</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-envelope text-gray-400"></i></div>
+                        <input type="email" id="login-email" required class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-gray-50 focus:bg-white" placeholder="name@example.com">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1 pl-1">รหัสผ่าน</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-lock text-gray-400"></i></div>
+                        <input type="password" id="login-password" required class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-gray-50 focus:bg-white" placeholder="••••••••">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02] transition-all duration-200 flex justify-center items-center gap-2">
+                    <span>เข้าสู่ระบบ</span><i class="fas fa-arrow-right"></i>
+                </button>
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-gray-200"></div><span class="flex-shrink-0 mx-4 text-gray-400 text-xs">หรือเข้าสู่ระบบด้วย</span><div class="flex-grow border-t border-gray-200"></div>
+                </div>
+                <button type="button" onclick="handleGoogleLogin()" class="w-full bg-white text-gray-700 font-semibold py-3 rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 hover:shadow-md transition-all duration-200 flex justify-center items-center gap-3">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google Logo"><span>Google Account</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard-page" class="hidden flex flex-col h-full fade-in">
+        <nav class="bg-white shadow-md z-20 px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="https://satri-plus.vercel.app/SPT-P.png" class="h-10 w-10">
+                <div><h1 class="font-bold text-gray-800 text-lg leading-tight">Admin Console</h1><p class="text-xs text-gray-500">จัดการผู้ใช้งาน</p></div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex flex-col items-end">
+                    <span id="nav-user-email" class="text-sm font-semibold text-gray-700">...</span>
+                    <span id="nav-user-role" class="text-xs font-medium text-gray-500">Loading...</span>
+                </div>
+                <button onclick="logout()" class="bg-red-50 text-red-600 hover:bg-red-100 p-2 rounded-lg transition-colors" title="ออกจากระบบ"><i class="fas fa-sign-out-alt text-lg"></i></button>
+            </div>
+        </nav>
+
+        <main class="flex-grow p-4 md:p-8 overflow-y-auto bg-gray-50">
+            <div class="max-w-6xl mx-auto space-y-6">
+                
+                <div class="flex flex-col gap-4 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">รายชื่อผู้ใช้งาน</h2>
+                            <p class="text-gray-500 text-sm">จัดการบัญชีผู้ใช้และสิทธิ์การเข้าถึง</p>
+                        </div>
+                        <button id="add-user-btn" onclick="openAddUserModal()" class="hidden bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+                            <i class="fas fa-user-plus"></i> เพิ่มผู้ใช้งาน
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mt-2">
+                        <div class="md:col-span-8 relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="search-input" onkeyup="applyFilters()" 
+                                class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
+                                placeholder="ค้นหาชื่อ หรือ อีเมล...">
+                        </div>
+                        <div class="md:col-span-4">
+                            <select id="role-filter" onchange="applyFilters()" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                                <option value="All">ทุกตำแหน่ง (All Roles)</option>
+                                <option value="Student">Student (นักเรียน)</option>
+                                <option value="Teacher">Teacher (อาจารย์)</option>
+                                <option value="Admin">Admin (ผู้ดูแลระบบ)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider border-b border-gray-200">
+                                    <th class="p-4 font-semibold text-center w-16">#</th>
+                                    <th class="p-4 font-semibold">ข้อมูลผู้ใช้</th>
+                                    <th class="p-4 font-semibold">ตำแหน่ง</th>
+                                    <th class="p-4 font-semibold text-center">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-table-body" class="text-sm divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="empty-state" class="hidden p-10 text-center flex-col items-center justify-center">
+                        <div class="bg-gray-100 p-4 rounded-full mb-3 inline-block"><i class="fas fa-users-slash text-gray-400 text-3xl"></i></div>
+                        <p class="text-gray-500">ไม่พบข้อมูลที่ค้นหา</p>
+                    </div>
+
+                    <div id="pagination-controls" class="p-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+                        <span id="page-info">แสดง 0 ถึง 0 จาก 0 รายการ</span>
+                        <div class="flex gap-2">
+                            <button onclick="changePage(-1)" id="prev-page-btn" class="px-3 py-1 bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50">ก่อนหน้า</button>
+                            <button onclick="changePage(1)" id="next-page-btn" class="px-3 py-1 bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50">ถัดไป</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="user-modal" class="fixed inset-0 z-40 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-50 transition-opacity backdrop-blur-sm"></div>
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-4 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold leading-6 text-white"><i class="fas fa-user-circle mr-2"></i> <span id="modal-title-text">เพิ่มผู้ใช้งานใหม่</span></h3>
+                    <button onclick="closeModal()" class="text-white hover:text-gray-200"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                <div class="px-4 py-6 sm:px-6">
+                    <form id="user-form" class="space-y-4">
+                        <input type="hidden" id="edit-doc-id">
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล</label><input type="text" id="input-name" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="เช่น สมชาย ใจดี"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">อีเมล</label><input type="email" id="input-email" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="example@satri.ac.th"></div>
+                        <div id="password-group"><label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label><input type="password" id="input-password" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="อย่างน้อย 6 ตัวอักษร"></div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ตำแหน่ง</label>
+                            <select id="input-role" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                                <option value="Student">นักเรียน</option>
+                                <option value="Teacher">อาจารย์</option>
+                                <option value="Admin">ผู้ดูแลระบบ</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
+                    <button type="button" onclick="handleSaveUser()" class="inline-flex w-full justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:w-auto"><span id="btn-save-text">บันทึกข้อมูล</span></button>
+                    <button type="button" onclick="closeModal()" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">ยกเลิก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // --- Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAN2qEveZgexEI47zBdsHqc119Y3tRLdrg",
+            authDomain: "spt-plus.firebaseapp.com",
+            projectId: "spt-plus",
+            storageBucket: "spt-plus.firebasestorage.app",
+            messagingSenderId: "361913251411",
+            appId: "1:361913251411:web:7b17dfada00f08bad878a6",
+            measurementId: "G-1H0F32Q54F"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const secondaryApp = initializeApp(firebaseConfig, "Secondary"); // For Creating User without logout
+        const secondaryAuth = getAuth(secondaryApp);
+
+        // --- State ---
+        let rawUsersData = [];   // ข้อมูลทั้งหมดจาก DB
+        let filteredUsers = [];  // ข้อมูลที่ผ่านการ Filter/Search แล้ว
+        let currentUserRole = ''; // Role ของคนล็อกอินปัจจุบัน
+        let isEditMode = false;
+        
+        // --- Pagination State ---
+        let currentPage = 1;
+        const itemsPerPage = 30; // แสดงผลหน้าละ 30 คน
+
+        // --- Elements ---
+        const loginPage = document.getElementById('login-page');
+        const dashboardPage = document.getElementById('dashboard-page');
+        const loader = document.getElementById('global-loader');
+        const tableBody = document.getElementById('user-table-body');
+        const emptyState = document.getElementById('empty-state');
+        const modal = document.getElementById('user-modal');
+        const addUserBtn = document.getElementById('add-user-btn');
+
+        // --- Auth & Role Check ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Link Account Logic
+                let userDocRef = doc(db, "users", user.uid);
+                let userDoc = await getDoc(userDocRef);
+                let isValidUser = userDoc.exists();
+                let userData = isValidUser ? userDoc.data() : null;
+
+                if (!isValidUser) {
+                    const q = query(collection(db, "users"), where("linkedGoogleUid", "==", user.uid));
+                    const querySnapshot = await getDocs(q);
+                    if (!querySnapshot.empty) { isValidUser = true; userData = querySnapshot.docs[0].data(); }
+                }
+                if (!isValidUser) {
+                     const qEmail = query(collection(db, "users"), where("email", "==", user.email));
+                     const emailSnapshot = await getDocs(qEmail);
+                     if (!emailSnapshot.empty) { isValidUser = true; userData = emailSnapshot.docs[0].data(); }
+                }
+
+                if (isValidUser) {
+                    // Logged in Success
+                    currentUserRole = userData.role || 'Student';
+                    document.getElementById('nav-user-email').textContent = user.email;
+                    document.getElementById('nav-user-role').textContent = currentUserRole;
+                    
+                    // Show/Hide Add Button based on Role
+                    if(currentUserRole === 'Admin') {
+                        addUserBtn.classList.remove('hidden');
+                    } else {
+                        addUserBtn.classList.add('hidden');
+                    }
+
+                    showDashboard();
+                    fetchUsers();
+                    loader.classList.add('opacity-0', 'pointer-events-none');
+                } else {
+                    await signOut(auth);
+                    Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบไม่ได้', text: 'บัญชีนี้ไม่มีสิทธิ์ใช้งาน', confirmButtonColor: '#d33' });
+                    showLogin();
+                    loader.classList.add('opacity-0', 'pointer-events-none');
+                }
+            } else {
+                showLogin();
+                loader.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
+
+        // --- Login Functions ---
+        window.handleLogin = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                Swal.showLoading();
+                await signInWithEmailAndPassword(auth, email, password);
+                Swal.close();
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบไม่สำเร็จ', text: 'อีเมลหรือรหัสผ่านผิด' });
+            }
+        };
+
+        window.handleGoogleLogin = async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                // Reuse logic from AuthStateChanged for verification, but handle linking here if needed
+                // (Already handled in previous step's logic inside AuthState, keeping it simple here)
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        window.logout = async () => {
+            Swal.fire({ title: 'ออกจากระบบ?', icon: 'warning', showCancelButton: true, confirmButtonText: 'ใช่', cancelButtonText: 'ไม่', confirmButtonColor: '#d33' })
+            .then(async (result) => { if (result.isConfirmed) await signOut(auth); });
+        };
+
+        document.getElementById('login-form').addEventListener('submit', window.handleLogin);
+
+        function showLogin() { loginPage.classList.remove('hidden'); dashboardPage.classList.add('hidden'); }
+        function showDashboard() { loginPage.classList.add('hidden'); dashboardPage.classList.remove('hidden'); }
+
+        // --- Data Fetching & Processing ---
+        async function fetchUsers() {
+            try {
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center p-4"><div class="loader mx-auto"></div></td></tr>';
+                const querySnapshot = await getDocs(collection(db, "users"));
+                rawUsersData = [];
+                querySnapshot.forEach((doc) => {
+                    rawUsersData.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Sort by name (optional)
+                rawUsersData.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+                applyFilters(); // Initial render via filter
+            } catch (error) {
+                console.error("Error fetching users: ", error);
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-red-500">Error Loading Data</td></tr>';
+            }
+        }
+
+        // --- Filter, Search, Pagination Logic ---
+        window.applyFilters = () => {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const roleFilter = document.getElementById('role-filter').value;
+
+            filteredUsers = rawUsersData.filter(user => {
+                const name = (user.name || '').toLowerCase();
+                const email = (user.email || '').toLowerCase();
+                const role = user.role || 'Student';
+
+                const matchSearch = name.includes(searchTerm) || email.includes(searchTerm);
+                const matchRole = roleFilter === 'All' || role === roleFilter;
+
+                return matchSearch && matchRole;
+            });
+
+            currentPage = 1; // Reset to page 1 when filter changes
+            renderTable();
+        };
+
+        window.changePage = (delta) => {
+            const maxPage = Math.ceil(filteredUsers.length / itemsPerPage);
+            const newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= maxPage) {
+                currentPage = newPage;
+                renderTable();
+            }
+        };
+
+        function renderTable() {
+            tableBody.innerHTML = '';
+            
+            if (filteredUsers.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                document.getElementById('pagination-controls').classList.add('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+                document.getElementById('pagination-controls').classList.remove('hidden');
+            }
+
+            // Pagination Logic
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = filteredUsers.slice(startIndex, endIndex);
+            const totalItems = filteredUsers.length;
+
+            // Render Rows
+            pageData.forEach((user, index) => {
+                const globalIndex = startIndex + index + 1; // ลำดับจริงทั้งหมด
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0";
+                
+                const initial = user.name ? user.name.charAt(0).toUpperCase() : '?';
+                const colorClasses = ['bg-blue-100 text-blue-600', 'bg-green-100 text-green-600', 'bg-purple-100 text-purple-600', 'bg-orange-100 text-orange-600'];
+                const colorClass = colorClasses[index % colorClasses.length];
+
+                let roleBadge = '';
+                if(user.role === 'Admin') roleBadge = '<span class="px-2 py-1 rounded-md bg-red-100 text-red-600 text-xs font-semibold">Admin</span>';
+                else if(user.role === 'Teacher') roleBadge = '<span class="px-2 py-1 rounded-md bg-purple-100 text-purple-600 text-xs font-semibold">Teacher</span>';
+                else roleBadge = '<span class="px-2 py-1 rounded-md bg-gray-100 text-gray-600 text-xs font-semibold">Student</span>';
+
+                // Check Role for Buttons
+                let actionButtons = '';
+                if (currentUserRole === 'Admin') {
+                    actionButtons = `
+                        <div class="flex justify-center gap-2">
+                            <button onclick="openEditUserModal('${user.id}')" class="p-2 w-8 h-8 flex items-center justify-center rounded-lg bg-amber-50 text-amber-500 hover:bg-amber-100" title="แก้ไข"><i class="fas fa-edit"></i></button>
+                            <button onclick="sendResetLink('${user.email}')" class="p-2 w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-100" title="ส่งรีเซ็ต"><i class="fas fa-key"></i></button>
+                            <button onclick="deleteUser('${user.id}', '${user.name}')" class="p-2 w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-500 hover:bg-red-100" title="ลบ"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    `;
+                } else {
+                    actionButtons = `<span class="text-gray-400 text-xs text-center block">- ไม่มีสิทธิ์ -</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="p-4 text-center text-gray-400 font-mono text-xs">${globalIndex}</td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full ${colorClass} flex items-center justify-center font-bold text-lg shadow-sm">${initial}</div>
+                            <div>
+                                <div class="font-medium text-gray-800">${user.name || 'ไม่ระบุชื่อ'}</div>
+                                <div class="text-xs text-gray-500">${user.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4">${roleBadge}</td>
+                    <td class="p-4">${actionButtons}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Update Pagination Controls
+            const maxPage = Math.ceil(totalItems / itemsPerPage);
+            document.getElementById('page-info').textContent = `แสดง ${startIndex + 1} ถึง ${Math.min(endIndex, totalItems)} จาก ${totalItems} รายการ`;
+            document.getElementById('prev-page-btn').disabled = currentPage === 1;
+            document.getElementById('next-page-btn').disabled = currentPage >= maxPage;
+        }
+
+        // --- CRUD Actions (With Role Check) ---
+        window.openAddUserModal = () => {
+            if (currentUserRole !== 'Admin') return Swal.fire('ไม่อนุญาต', 'เฉพาะ Admin เท่านั้น', 'error');
+            isEditMode = false;
+            document.getElementById('modal-title-text').textContent = "เพิ่มผู้ใช้งานใหม่";
+            document.getElementById('btn-save-text').textContent = "สร้างบัญชี";
+            document.getElementById('user-form').reset();
+            document.getElementById('input-email').disabled = false;
+            document.getElementById('input-email').classList.remove('bg-gray-100', 'text-gray-500');
+            document.getElementById('password-group').classList.remove('hidden');
+            document.getElementById('input-password').required = true;
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.firstElementChild.nextElementSibling.classList.remove('scale-95', 'opacity-0'), 10);
+        };
+
+        window.openEditUserModal = (id) => {
+            if (currentUserRole !== 'Admin') return Swal.fire('ไม่อนุญาต', 'เฉพาะ Admin เท่านั้น', 'error');
+            const user = rawUsersData.find(u => u.id === id);
+            if (!user) return;
+            isEditMode = true;
+            document.getElementById('edit-doc-id').value = id;
+            document.getElementById('modal-title-text').textContent = "แก้ไขข้อมูลผู้ใช้งาน";
+            document.getElementById('btn-save-text').textContent = "บันทึกการแก้ไข";
+            document.getElementById('input-name').value = user.name || '';
+            document.getElementById('input-email').value = user.email || '';
+            document.getElementById('input-role').value = user.role || 'Student';
+            document.getElementById('input-email').disabled = true;
+            document.getElementById('input-email').classList.add('bg-gray-100', 'text-gray-500');
+            document.getElementById('password-group').classList.add('hidden');
+            document.getElementById('input-password').required = false;
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.firstElementChild.nextElementSibling.classList.remove('scale-95', 'opacity-0'), 10);
+        };
+
+        window.closeModal = () => {
+            modal.firstElementChild.nextElementSibling.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        };
+
+        window.handleSaveUser = async () => {
+            if (currentUserRole !== 'Admin') return; // Guard
+            const name = document.getElementById('input-name').value;
+            const email = document.getElementById('input-email').value;
+            const role = document.getElementById('input-role').value;
+            
+            if(!name || !email) { Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกชื่อและอีเมล', 'warning'); return; }
+
+            try {
+                Swal.showLoading();
+                if (isEditMode) {
+                    const docId = document.getElementById('edit-doc-id').value;
+                    await updateDoc(doc(db, "users", docId), { name, role });
+                    Swal.fire({ icon: 'success', title: 'แก้ไขข้อมูลสำเร็จ', timer: 1500, showConfirmButton: false });
+                } else {
+                    const password = document.getElementById('input-password').value;
+                    if(!password || password.length < 6) { Swal.fire('รหัสผ่านสั้นเกินไป', 'ต้องมีอย่างน้อย 6 ตัวอักษร', 'warning'); return; }
+                    const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                    const newUser = userCredential.user;
+                    await setDoc(doc(db, "users", newUser.uid), { name, email, role, createdAt: new Date() });
+                    await signOut(secondaryAuth);
+                    Swal.fire({ icon: 'success', title: 'เพิ่มผู้ใช้งานสำเร็จ', timer: 1500, showConfirmButton: false });
+                }
+                closeModal();
+                fetchUsers();
+            } catch (error) {
+                console.error(error);
+                let msg = 'เกิดข้อผิดพลาด';
+                if(error.code === 'auth/email-already-in-use') msg = 'อีเมลนี้มีผู้ใช้งานแล้ว';
+                Swal.fire({ icon: 'error', title: 'ไม่สามารถบันทึกได้', text: msg });
+            }
+        };
+
+        window.sendResetLink = async (email) => {
+            if (currentUserRole !== 'Admin') return;
+            Swal.fire({ title: 'ส่งลิงก์เปลี่ยนรหัส?', text: email, icon: 'question', showCancelButton: true, confirmButtonText: 'ส่ง', cancelButtonText: 'ยกเลิก' })
+            .then(async (result) => { if (result.isConfirmed) { await sendPasswordResetEmail(auth, email); Swal.fire('สำเร็จ', 'ตรวจสอบอีเมล', 'success'); } });
+        };
+
+        window.deleteUser = async (id, name) => {
+            if (currentUserRole !== 'Admin') return Swal.fire('ไม่อนุญาต', 'เฉพาะ Admin เท่านั้น', 'error');
+            Swal.fire({ title: 'ยืนยันการลบ?', html: `ลบ <b>${name}</b><br><small class="text-red-500">ผู้ใช้นี้จะเข้าสู่ระบบไม่ได้อีก</small>`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ลบ', cancelButtonText: 'ยกเลิก' })
+            .then(async (result) => {
+                if (result.isConfirmed) {
+                    try { await deleteDoc(doc(db, "users", id)); Swal.fire('ลบสำเร็จ', '', 'success'); fetchUsers(); }
+                    catch (e) { Swal.fire('ผิดพลาด', 'ไม่สามารถลบได้', 'error'); }
+                }
+            });
+        };
+
+        window.openAddUserModal = window.openAddUserModal;
+        window.closeModal = window.closeModal;
+    </script>
+</body>
+</html>
